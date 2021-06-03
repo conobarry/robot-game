@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/jump.png-ee91d86ec39d8c1dde239a382e843e86.s3tc.stex"
-path.etc="res://.import/jump.png-ee91d86ec39d8c1dde239a382e843e86.etc.stex"
+path.s3tc="res://.import/white_wood.png-821b7bf9b3881778c9bff1c965d8a87c.s3tc.stex"
+path.etc="res://.import/white_wood.png-821b7bf9b3881778c9bff1c965d8a87c.etc.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/player/textures/jump.png"
-dest_files=[ "res://.import/jump.png-ee91d86ec39d8c1dde239a382e843e86.s3tc.stex", "res://.import/jump.png-ee91d86ec39d8c1dde239a382e843e86.etc.stex" ]
+source_file="res://models/white_wood.png"
+dest_files=[ "res://.import/white_wood.png-821b7bf9b3881778c9bff1c965d8a87c.s3tc.stex", "res://.import/white_wood.png-821b7bf9b3881778c9bff1c965d8a87c.etc.stex" ]
 
 [params]
 
