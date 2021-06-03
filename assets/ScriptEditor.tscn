@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/ui/RunButton.cs" type="Script" id=1]
+[ext_resource path="res://assets/Window.cs" type="Script" id=2]
+[ext_resource path="res://assets/Titlebar.cs" type="Script" id=3]
+[ext_resource path="res://assets/ScriptEditor.cs" type="Script" id=5]
+
+[node name="ScriptEditor" type="CanvasLayer"]
+script = ExtResource( 5 )
+
+[node name="Window" type="MarginContainer" parent="."]
+margin_left = 509.008
+margin_top = 259.544
+margin_right = 1009.01
+margin_bottom = 559.544
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Window"]
+margin_right = 500.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Titlebar" type="Panel" parent="Window/VBoxContainer"]
+margin_right = 500.0
+margin_bottom = 10.0
+rect_min_size = Vector2( 0, 10 )
+size_flags_horizontal = 3
+script = ExtResource( 3 )
+
+[node name="InputContainer" type="VBoxContainer" parent="Window/VBoxContainer"]
+margin_top = 14.0
+margin_right = 500.0
+margin_bottom = 300.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EditorContainer" type="VSplitContainer" parent="Window/VBoxContainer/InputContainer"]
+margin_right = 500.0
+margin_bottom = 262.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+split_offset = 115
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextEditor" type="TextEdit" parent="Window/VBoxContainer/InputContainer/EditorContainer"]
+margin_right = 500.0
+margin_bottom = 240.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "robot.moveForward()"
+syntax_highlighting = true
+show_line_numbers = true
+breakpoint_gutter = true
+fold_gutter = true
+highlight_all_occurrences = true
+minimap_draw = true
+
+[node name="Console" type="RichTextLabel" parent="Window/VBoxContainer/InputContainer/EditorContainer"]
+margin_top = 252.0
+margin_right = 500.0
+margin_bottom = 262.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Console output"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RunButton" type="Button" parent="Window/VBoxContainer/InputContainer"]
+margin_top = 266.0
+margin_right = 500.0
+margin_bottom = 286.0
+size_flags_horizontal = 3
+text = "Run"
+script = ExtResource( 1 )
+
+[connection signal="pressed" from="Window/VBoxContainer/InputContainer/RunButton" to="Window/VBoxContainer/InputContainer/RunButton" method="OnButtonPressed"]
