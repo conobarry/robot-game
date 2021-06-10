@@ -12,8 +12,14 @@ public class ScriptEditor : CanvasLayer
     {
         this.runButton = GetNode<RunButton>(new NodePath("Window/VBoxContainer/InputContainer/RunButton"));
         this.scriptManager = new PythonScriptManager();        
-        
-        runButton.Connect(nameof(RunButton.OnRunScript), scriptManager, nameof(PythonScriptManager.RunScript), new Godot.Collections.Array {robot, "test"});
+    }
+    
+    public ScriptEditor _Init(Robot robot)
+    {        
+        this.robot = robot;
+        runButton.Connect(nameof(RunButton.OnRunScript), scriptManager, nameof(PythonScriptManager.RunScriptSharp), new Godot.Collections.Array {robot, "test"});
+                
+        return this;
     }
 
 }
