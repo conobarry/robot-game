@@ -130,6 +130,11 @@ public class PythonScriptManager : Node
         //     process.StartInfo.UseShellExecute = false;
         //     process.StartInfo.RedirectStandardInput = true;
         // }
+        
+        // while (true)
+        // {
+            
+        // }
     }
     
     static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

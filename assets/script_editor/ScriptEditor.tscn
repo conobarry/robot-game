@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://assets/ui/RunButton.cs" type="Script" id=1]
-[ext_resource path="res://assets/Window.cs" type="Script" id=2]
-[ext_resource path="res://assets/Titlebar.cs" type="Script" id=3]
-[ext_resource path="res://assets/ScriptEditor.cs" type="Script" id=5]
+[ext_resource path="res://assets/ui/Window.cs" type="Script" id=2]
+[ext_resource path="res://assets/ui/Titlebar.cs" type="Script" id=3]
+[ext_resource path="res://assets/script_editor/ScriptEditor.cs" type="Script" id=5]
 
 [node name="ScriptEditor" type="CanvasLayer"]
 script = ExtResource( 5 )
