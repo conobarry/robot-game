@@ -48,10 +48,10 @@ public class Robot : KinematicBody {
         
         isForward = true;
         
-        for (int i = 0; i < 700; i++)
-        {
-            GD.Print(i);
-        }
+        // for (int i = 0; i < 700; i++)
+        // {
+        //     GD.Print(i);
+        // }
         
         // Vector3 direction = new Vector3(0, 1, 0);
         // MoveAndCollide(-this.Transform.basis.z * 5);
