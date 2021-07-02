@@ -24,7 +24,25 @@ public class PythonScriptManager : Node
         // Connect("OnRunScript", this, "RunScript");
     }
     
-    public void RunScript(Robot robot, string script)
+    public string ReadEnvironment()
+    {
+        string filePath = "res://assets/script_editor/python/env.py";
+        // Resource pythonFile = ResourceLoader.Load(filePath, nameof(TextFile));
+        
+        Godot.File pythonFile = new Godot.File();
+        pythonFile.Open(filePath, Godot.File.ModeFlags.Read);
+        string script = pythonFile.GetAsText();
+        pythonFile.Close();
+        return script;
+        
+    }
+    
+    private void StringWritten(object sender, StringWrittenEventArgs<string> e)
+    {
+        GD.Print(e.Value);
+    }
+    
+    public void RunScript(Robot robot, string script, Console console)
     {
         GD.Print("Executing script");
         
@@ -32,38 +50,71 @@ public class PythonScriptManager : Node
         ScriptEngine scriptEngine = IronPython.Hosting.Python.CreateEngine();
         
         var paths = scriptEngine.GetSearchPaths();
-        paths.Add("assets/robot/python/");
+        paths.Add("assets/script_editor/python/");
         scriptEngine.SetSearchPaths(paths);        
         
         // Robot robot = new Robot();
         scriptEngine.Runtime.Globals.SetVariable("cs_robot", robot);
         
-        var scriptScope = scriptEngine.CreateScope();
-                         
+        ScriptScope scriptScope = scriptEngine.CreateScope();
+                                 
         // Execute a python file and store it in the scope
-        scriptEngine.ExecuteFile("assets/robot/python/robot.py", scriptScope);
-        scriptEngine.ExecuteFile("assets/robot/python/test_script.py", scriptScope);
-        
-        // Execute a python script in a string and store it in the scope        
-        // scriptEngine.Execute(script, scriptScope);
-        
-        var testFn = scriptScope.GetVariable("test");
+        scriptEngine.ExecuteFile("assets/script_editor/python/robot.py", scriptScope);
+        scriptEngine.ExecuteFile("assets/script_editor/python/test_script.py", scriptScope);
         
         // These lines make it so the output of the script can be captured        
-        var streamOut = new MemoryStream();
-        var streamErr = new MemoryStream();        
-        scriptEngine.Runtime.IO.SetOutput(streamOut, Encoding.Default);
-        scriptEngine.Runtime.IO.SetErrorOutput(streamErr, Encoding.Default);
+        MemoryStream streamOut = new MemoryStream();
+        MemoryStream streamErr = new MemoryStream();
         
+        AutomaticStreamWriter writer = new AutomaticStreamWriter(streamOut);
+        writer.StringWritten += new EventHandler<StringWrittenEventArgs<string>>(StringWritten);
+        
+        // StreamWriter writer = new StreamWriter(System.Console.OpenStandardOutput());
+        // writer.AutoFlush = true;
+        
+        scriptEngine.Runtime.IO.SetOutput(streamOut, writer);
+        
+        // scriptEngine.Runtime.IO.SetOutput(streamOut, Encoding.Default);
+        scriptEngine.Runtime.IO.SetErrorOutput(streamErr, Encoding.Default);
         // scriptEngine.Operations.Invoke(testFn);
         
-        dynamic returned = scriptEngine.Operations.Invoke(testFn);
-        dynamic stdout = Encoding.Default.GetString(streamOut.ToArray());
-        dynamic stderr = Encoding.Default.GetString(streamErr.ToArray());
+        string testScript = @"print('Running test script')
+
+def test():
+    print('This is a test.')
+
+test()
+";
+
+        dynamic testFn = scriptScope.GetVariable("test");
         
-        // GD.Print("returned       : ", returned);
-        // GD.Print("captured stdout: ", stdout);
-        // GD.Print("captured stderr: ", stderr);
+        // StreamReader reader = new StreamReader(streamOut, Encoding.Default);
+        
+        // streamOut.BeginRead()
+        
+        try
+        {                                       
+            // Execute a python script from a string and store it in the scope
+            dynamic returned = scriptEngine.Execute(testScript, scriptScope);
+            
+            // dynamic returned = scriptEngine.Operations.Invoke(testFn);
+            
+            dynamic stdout = Encoding.Default.GetString(streamOut.ToArray());
+            dynamic stderr = Encoding.Default.GetString(streamErr.ToArray());
+            
+            // GD.Print("returned       : ", returned);
+            // GD.Print("captured stdout: ", stdout);
+            // GD.Print("captured stderr: ", stderr);
+        }
+        catch (Exception e)
+        {
+            ExceptionOperations eo = scriptEngine.GetService<ExceptionOperations>();
+            string error = eo.FormatException(e);
+            console.PrintError(error);
+            // GD.Print("Exception: ", error);
+        }
+        
+        
     }
     
     public void RunScriptExternal(Robot robot, string script)
@@ -78,6 +129,8 @@ public class PythonScriptManager : Node
     
     public void RunScriptSharp(Robot robot, string script)
     {
+        GD.Print("Running script");
+        
         Process process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -93,22 +146,31 @@ public class PythonScriptManager : Node
             EnableRaisingEvents = true
         };
         
-        process.ErrorDataReceived += Process_OutputDataReceived;
+        // process.ErrorDataReceived += Process_ErrorDataReceived;
         process.OutputDataReceived += Process_OutputDataReceived;
-        
+                
         process.Start();
         process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
+        // process.BeginErrorReadLine();
         
         // StreamReader streamReader = process.StandardOutput;        
         
         // StreamWriter streamWriter = process.StandardInput;
         // streamWriter.WriteLine("print(5)");
-        process.StandardInput.WriteLine("def test():");
-        process.StandardInput.WriteLine("   print(20)");
-        process.StandardInput.WriteLine("");
-        process.StandardInput.WriteLine("test()");
-        process.StandardInput.WriteLine("exit()");
+        
+        OS.DelayMsec(100);
+        
+        process.StandardInput.WriteLine(ReadEnvironment());
+                
+        string testScript = @"print('Running test script')
+
+def test():
+    print('This is a test.')
+
+test()
+die()";
+        
+        process.StandardInput.WriteLine(testScript);
         
         // string output = process.StandardOutput.ReadToEnd();
         // GD.Print(output);
@@ -139,8 +201,34 @@ public class PythonScriptManager : Node
     
     static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        if (e.Data != null) {GD.Print(e.Data);}
-        // Console.WriteLine(e.Data);
+        if (e.Data != null)
+        {
+            if (e.Data.StartsWith("#output"))
+            {
+                GD.Print("Output: ", e.Data);
+            }
+            else if (e.Data.StartsWith("#error"))
+            {
+                GD.Print($"Error: {e.Data.Trim('>', ' ', '.')}");
+            }
+        }
+        
+    }
+    
+    static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+    {
+        if (e.Data != null)
+        {
+            if (e.Data.StartsWith(">>>"))
+            {
+                GD.Print($"Error: {e.Data.Trim('>', ' ', '.')}");
+            }
+            else
+            {
+                GD.Print(e.Data);
+            }
+        }
+        
     }
     
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
