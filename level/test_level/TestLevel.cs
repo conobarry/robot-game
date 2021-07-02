@@ -9,7 +9,7 @@ public class TestLevel : Spatial
         ScriptEditor scriptEditor = GetNode<ScriptEditor>(new NodePath(typeof(ScriptEditor).Name));
                 
         Robot robot = GetNode<Robot>(new NodePath(typeof(Robot).Name));
-        
+                
         scriptEditor._Init(robot);
     }
 
