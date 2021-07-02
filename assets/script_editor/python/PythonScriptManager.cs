@@ -1,3 +1,5 @@
+// Go here to see what I'm doing: https://stackoverflow.com/questions/3055002/how-can-i-redirect-the-stdout-of-ironpython-in-c
+
 using Godot;
 using System;
 using System.IO;
