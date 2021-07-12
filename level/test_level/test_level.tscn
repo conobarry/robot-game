@@ -20,3 +20,6 @@ transform = Transform( 0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0
 
 [node name="Cube" parent="." instance=ExtResource( 8 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.173431, -1.29004, -0.00612736 )
+
+[node name="Cube2" parent="." instance=ExtResource( 8 )]
+transform = Transform( 19.6027, 0, 0, 0, 1, 0, 0, 0, 18.2932, -0.173431, -2.51222, -0.00612736 )

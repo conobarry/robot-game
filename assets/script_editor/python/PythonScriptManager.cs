@@ -48,14 +48,15 @@ public class PythonScriptManager : Node
     {
         GD.Print("Executing script");
         
-        // Create a script engine
+        // Create an IronPython script engine
         ScriptEngine scriptEngine = IronPython.Hosting.Python.CreateEngine();
         
+        // Add the python files to the search path
         var paths = scriptEngine.GetSearchPaths();
         paths.Add("assets/script_editor/python/");
         scriptEngine.SetSearchPaths(paths);        
         
-        // Robot robot = new Robot();
+        // Set the python variable cs_robot to be a c# robot object
         scriptEngine.Runtime.Globals.SetVariable("cs_robot", robot);
         
         ScriptScope scriptScope = scriptEngine.CreateScope();
@@ -97,9 +98,9 @@ test()
         try
         {                                       
             // Execute a python script from a string and store it in the scope
-            dynamic returned = scriptEngine.Execute(testScript, scriptScope);
+            // dynamic returned = scriptEngine.Execute(testScript, scriptScope);
             
-            // dynamic returned = scriptEngine.Operations.Invoke(testFn);
+            dynamic returned = scriptEngine.Operations.Invoke(testFn);
             
             dynamic stdout = Encoding.Default.GetString(streamOut.ToArray());
             dynamic stderr = Encoding.Default.GetString(streamErr.ToArray());
