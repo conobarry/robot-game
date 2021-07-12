@@ -57,7 +57,7 @@ window/size/height=576
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/node25d/plugin.cfg" )
+enabled=PoolStringArray(  )
 
 [gdnative]
 

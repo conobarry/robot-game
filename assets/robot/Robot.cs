@@ -22,8 +22,7 @@ public class Robot : KinematicBody {
     
     public override void _PhysicsProcess(float delta)
     {
-        velocity += gravity * delta;
-        
+        velocity += gravity * delta;        
         
         var vy = velocity.y;
         velocity = Vector3.Zero;
@@ -33,8 +32,7 @@ public class Robot : KinematicBody {
             velocity += -Transform.basis.z * speed;
         }
         
-        velocity.y = vy;
-        
+        velocity.y = vy;        
         
         velocity = MoveAndSlide(velocity, Vector3.Up);
     }
