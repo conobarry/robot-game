@@ -1,13 +1,22 @@
+using System;
 using Godot;
 
 public class RunButton : Button
 {        
     
-    [Signal]
-    public delegate void OnRunScript();
+    // [Signal]
+    // public delegate void OnRunScript();
+
+    public event EventHandler ButtonPressed;
     
-    public void OnButtonPressed()
+    public virtual void OnButtonPressed()
     {
-        EmitSignal(nameof(OnRunScript));
+        // EmitSignal(nameof(OnRunScript));
+        EventHandler handler = ButtonPressed;
+        // handler?.Invoke(this, e);
+        if (handler != null)
+        {
+            handler(this, EventArgs.Empty);
+        }
     }
 }
