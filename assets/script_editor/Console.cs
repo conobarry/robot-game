@@ -13,6 +13,12 @@ public class Console : RichTextLabel
     {
         this.AddText(text);
     }
+
+    public void PrintLine(string text)
+    {
+        this.Print(text);
+        this.Print("\n");
+    }
     
     public void PrintError(string text)
     {
