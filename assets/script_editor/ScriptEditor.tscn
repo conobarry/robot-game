@@ -57,7 +57,10 @@ margin_right = 500.0
 margin_bottom = 125.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "robot.moveForward()"
+text = "robot.move_forward(3)
+print(\"Hello there\")
+robot.move_backward(2)"
+highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
 breakpoint_gutter = true
