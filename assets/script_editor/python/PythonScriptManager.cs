@@ -4,31 +4,31 @@ using Godot;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using System.Diagnostics;
 
+// public delegate void SysOutEventHandler(object sender, )
+
 public class PythonScriptManager : Node
 {   
-    
-    // [Signal]
-    // public delegate void OnRunScript();
-    
-    // private Robot robot;
-    
-    // public PythonScriptManager(Robot robot)
-    // {
-    //     this.robot = robot;
-    // }
+
+    public event EventHandler<DataReceivedEventArgs> SysOutReceived;
+
+    public event EventHandler<DataReceivedEventArgs> SysErrReceived;
+
+    public Process process;
+    public StreamWriter streamWriter;
+    public StreamReader streamReader;
     
     public override void _Ready()
     {
         // Connect("OnRunScript", this, "RunScript");
     }
     
-    public string ReadEnvironment()
+    public string ReadFile(string filePath)
     {
-        string filePath = "res://assets/script_editor/python/env.py";
         // Resource pythonFile = ResourceLoader.Load(filePath, nameof(TextFile));
         
         Godot.File pythonFile = new Godot.File();
@@ -43,10 +43,143 @@ public class PythonScriptManager : Node
     {
         GD.Print(e.Value);
     }
-    
-    public void RunScript(Robot robot, string script, Console console)
+        
+    public void Execute(string script)
     {
-        GD.Print("Executing script");
+        GD.Print("Executing: ", script);
+        process.StandardInput.WriteLine(script);
+        OS.DelayMsec(2000);
+        
+        
+        // streamWriter.WriteLine(script);
+    }
+    
+    public void _InitSharp(Robot robot, Console console)
+    {
+        GD.Print("Setting up python environment");
+
+        string currDirectory = System.Environment.CurrentDirectory;
+        
+        process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/usr/bin/python3",
+                Arguments = "-iq",
+                WorkingDirectory = $"{currDirectory}/assets/script_editor/python",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
+            },
+            EnableRaisingEvents = true
+        };
+        
+        // process.ErrorDataReceived += Process_ErrorDataReceived;
+        // process.OutputDataReceived += Process_OutputDataReceived;
+        // this.process.OutputDataReceived += (sender, args) => EmitSignal(nameof(OnSysOut));
+
+        process.OutputDataReceived += (sender, args) => {
+            OnSysOut(args);
+        };
+
+        process.ErrorDataReceived += (sender, args) => {
+            OnSysErr(args);
+        };
+                
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        
+        // streamReader = process.StandardOutput;        
+        
+        streamWriter = process.StandardInput;
+        // streamWriter.WriteLine("print(5)");
+        
+        OS.DelayMsec(100);
+
+        string envFile = "res://assets/script_editor/python/env.py";
+        process.StandardInput.WriteLine(ReadFile(envFile));
+
+        // string robotFile = "res://assets/script_editor/python/robot2.py";
+        // this.process.StandardInput.WriteLine(ReadFile(robotFile));
+
+        // string testFile = "res://assets/script_editor/python/test_script2.py";
+        // process.StandardInput.WriteLine(ReadFile(testFile));
+
+        // using (StringReader reader = new StringReader(ReadFile(testFile)))
+        // {
+        //     string line = "";
+        //     while ((line = reader.ReadLine()) != null)
+        //     {
+        //         if (robot.isBusy == false)
+        //         {
+        //             process.StandardInput.WriteLine(line);
+        //         }
+                
+        //     }
+        // }
+    }
+
+    // Processes sysout from python and sends anything useful as an event
+    public void Process_OutputDataReceived(object sender, DataReceivedEventArgs args)
+    {
+        GD.Print("Output received: ", args.Data);
+
+        if (args.Data != null)
+        {
+            if (args.Data.StartsWith("@print"))
+            {
+                // OnSysOut(new EventArgs());
+            }
+            else if (args.Data.StartsWith("#error"))
+            {
+                GD.Print($"Error: {args.Data.Trim('>', ' ', '.')}");
+            }
+        }
+        
+    }
+    
+    public void Process_ErrorDataReceived(object sender, DataReceivedEventArgs args)
+    {
+
+        if (args.Data != null)
+        {
+            if (args.Data.StartsWith(">>>"))
+            {
+                GD.Print($"Error received: {args.Data.Trim('>', ' ', '.')}");
+            }
+            else
+            {
+                GD.Print(args.Data);
+            }
+        }
+        
+    }
+
+    protected virtual void OnSysOut(DataReceivedEventArgs args)
+    {
+        EventHandler<DataReceivedEventArgs> handler = SysOutReceived;
+        // handler?.Invoke(this, e);
+        if (handler != null)
+        {
+            handler(this, args);
+        }
+    }
+
+    protected virtual void OnSysErr(DataReceivedEventArgs args)
+    {
+        EventHandler<DataReceivedEventArgs> handler = SysErrReceived;
+        if (handler != null)
+        {
+            handler(this, args);
+        }
+    }
+
+    public void _InitIron(Robot robot, Console console)
+    {
+        GD.Print("Setting up IronPython environment");
         
         // Create an IronPython script engine
         ScriptEngine scriptEngine = IronPython.Hosting.Python.CreateEngine();
@@ -54,7 +187,7 @@ public class PythonScriptManager : Node
         // Add the python files to the search path
         var paths = scriptEngine.GetSearchPaths();
         paths.Add("assets/script_editor/python/");
-        scriptEngine.SetSearchPaths(paths);        
+        scriptEngine.SetSearchPaths(paths);
         
         // Set the python variable cs_robot to be a c# robot object
         scriptEngine.Runtime.Globals.SetVariable("cs_robot", robot);
@@ -63,7 +196,7 @@ public class PythonScriptManager : Node
                                  
         // Execute a python file and store it in the scope
         scriptEngine.ExecuteFile("assets/script_editor/python/robot.py", scriptScope);
-        scriptEngine.ExecuteFile("assets/script_editor/python/test_script.py", scriptScope);
+        // scriptEngine.ExecuteFile("assets/script_editor/python/test_script_iron.py", scriptScope);
         
         // These lines make it so the output of the script can be captured        
         MemoryStream streamOut = new MemoryStream();
@@ -71,6 +204,8 @@ public class PythonScriptManager : Node
         
         AutomaticStreamWriter writer = new AutomaticStreamWriter(streamOut);
         writer.StringWritten += new EventHandler<StringWrittenEventArgs<string>>(StringWritten);
+
+        // streamWriter = writer;
         
         // StreamWriter writer = new StreamWriter(System.Console.OpenStandardOutput());
         // writer.AutoFlush = true;
@@ -81,15 +216,7 @@ public class PythonScriptManager : Node
         scriptEngine.Runtime.IO.SetErrorOutput(streamErr, Encoding.Default);
         // scriptEngine.Operations.Invoke(testFn);
         
-        string testScript = @"print('Running test script')
-
-def test():
-    print('This is a test.')
-
-test()
-";
-
-        dynamic testFn = scriptScope.GetVariable("test");
+        // dynamic testFn = scriptScope.GetVariable("test");
         
         // StreamReader reader = new StreamReader(streamOut, Encoding.Default);
         
@@ -100,7 +227,7 @@ test()
             // Execute a python script from a string and store it in the scope
             // dynamic returned = scriptEngine.Execute(testScript, scriptScope);
             
-            dynamic returned = scriptEngine.Operations.Invoke(testFn);
+            // dynamic returned = scriptEngine.Operations.Invoke(testFn);
             
             dynamic stdout = Encoding.Default.GetString(streamOut.ToArray());
             dynamic stderr = Encoding.Default.GetString(streamErr.ToArray());
@@ -116,123 +243,9 @@ test()
             console.PrintError(error);
             // GD.Print("Exception: ", error);
         }
-        
-        
     }
     
-    public void RunScriptExternal(Robot robot, string script)
-    {
-        Godot.Collections.Array output = new Godot.Collections.Array();
-        int exitCode = OS.Execute("python3", new string[] {"--version"}, false, output);
-        GD.Print("exit code: " + exitCode);
-        GD.Print(output);        
-               
-        
-    }
     
-    public void RunScriptSharp(Robot robot, string script)
-    {
-        GD.Print("Running script");
-        
-        Process process = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "/usr/bin/python3",
-                Arguments = "-i",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true
-            },
-            EnableRaisingEvents = true
-        };
-        
-        // process.ErrorDataReceived += Process_ErrorDataReceived;
-        process.OutputDataReceived += Process_OutputDataReceived;
-                
-        process.Start();
-        process.BeginOutputReadLine();
-        // process.BeginErrorReadLine();
-        
-        // StreamReader streamReader = process.StandardOutput;        
-        
-        // StreamWriter streamWriter = process.StandardInput;
-        // streamWriter.WriteLine("print(5)");
-        
-        OS.DelayMsec(100);
-        
-        process.StandardInput.WriteLine(ReadEnvironment());
-                
-        string testScript = @"print('Running test script')
-
-def test():
-    print('This is a test.')
-
-test()
-die()";
-        
-        process.StandardInput.WriteLine(testScript);
-        
-        // string output = process.StandardOutput.ReadToEnd();
-        // GD.Print(output);
-        
-        // streamWriter.Close();
-        // streamReader.Close();
-        // GD.Print(output); 
-        // process.Kill();        
-        
-        // process.Close();
-        // process.WaitForExit();
-        
-        // Console.Read();               
-        
-        // string command = "-u";
-        // using (Process process = new Process())
-        // {
-        //     process.StartInfo.FileName = "/usr/bin/python3";
-        //     process.StartInfo.UseShellExecute = false;
-        //     process.StartInfo.RedirectStandardInput = true;
-        // }
-        
-        // while (true)
-        // {
-            
-        // }
-    }
-    
-    static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        if (e.Data != null)
-        {
-            if (e.Data.StartsWith("#output"))
-            {
-                GD.Print("Output: ", e.Data);
-            }
-            else if (e.Data.StartsWith("#error"))
-            {
-                GD.Print($"Error: {e.Data.Trim('>', ' ', '.')}");
-            }
-        }
-        
-    }
-    
-    static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        if (e.Data != null)
-        {
-            if (e.Data.StartsWith(">>>"))
-            {
-                GD.Print($"Error: {e.Data.Trim('>', ' ', '.')}");
-            }
-            else
-            {
-                GD.Print(e.Data);
-            }
-        }
-        
-    }
     
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
     //  public override void _Process(float delta)
