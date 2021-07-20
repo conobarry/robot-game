@@ -20,11 +20,6 @@ _global_script_classes=[ {
 "path": "res://addons/node25d/node_25d.gd"
 }, {
 "base": "KinematicBody",
-"class": "PlayerMath25D",
-"language": "GDScript",
-"path": "res://assets/player/player_math_25d.gd"
-}, {
-"base": "KinematicBody",
 "class": "ShadowMath25D",
 "language": "GDScript",
 "path": "res://addons/node25d/shadow_math_25d.gd"
@@ -37,7 +32,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "GitAPI": "",
 "Node25D": "res://addons/node25d/icons/node_25d_icon.png",
-"PlayerMath25D": "",
 "ShadowMath25D": "res://addons/node25d/icons/shadow_math_25d_icon.png",
 "YSort25D": "res://addons/node25d/icons/y_sort_25d_icon.png"
 }

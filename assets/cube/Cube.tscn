@@ -3,13 +3,13 @@
 [ext_resource path="res://assets/models/cube.mesh" type="ArrayMesh" id=1]
 
 [sub_resource type="BoxShape" id=1]
-extents = Vector3( 0.49735, 0.501426, 0.497892 )
+extents = Vector3( 0.504391, 0.497412, 0.508429 )
 
-[node name="Cube" type="StaticBody"]
-
-[node name="CollisionShape" type="CollisionShape" parent="."]
-shape = SubResource( 1 )
+[node name="Cube" type="RigidBody"]
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 mesh = ExtResource( 1 )
 material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 1 )
