@@ -13,45 +13,20 @@ _global_script_classes=[ {
 "class": "GitAPI",
 "language": "NativeScript",
 "path": "res://git_api.gdns"
-}, {
-"base": "Node2D",
-"class": "Node25D",
-"language": "GDScript",
-"path": "res://addons/node25d/node_25d.gd"
-}, {
-"base": "KinematicBody",
-"class": "ShadowMath25D",
-"language": "GDScript",
-"path": "res://addons/node25d/shadow_math_25d.gd"
-}, {
-"base": "Node",
-"class": "YSort25D",
-"language": "GDScript",
-"path": "res://addons/node25d/y_sort_25d.gd"
 } ]
 _global_script_class_icons={
-"GitAPI": "",
-"Node25D": "res://addons/node25d/icons/node_25d_icon.png",
-"ShadowMath25D": "res://addons/node25d/icons/shadow_math_25d_icon.png",
-"YSort25D": "res://addons/node25d/icons/y_sort_25d_icon.png"
+"GitAPI": ""
 }
 
 [application]
 
-config/name="2.5D Demo with GDScript"
-config/description="This demo project shows a way to create a 2.5D game
-in Godot by mixing 2D and 3D nodes. It also adds a
-2.5D editor viewport for easily editing 2.5D levels."
+config/name="RobotGame"
 run/main_scene="res://level/test_level/test_level.tscn"
 config/icon="res://icon.png"
 
 [display]
 
 window/size/height=576
-
-[editor_plugins]
-
-enabled=PoolStringArray(  )
 
 [gdnative]
 
