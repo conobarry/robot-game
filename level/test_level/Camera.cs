@@ -74,7 +74,7 @@ public class Camera : Godot.Camera
         Vector2 mouseDiff = prevMouseLoc - currMouseLoc;
 
         TranslateObjectLocal(new Vector3(mouseDiff.x * panMultiplier, 0, 0));
-        Translate(new Vector3(0, -mouseDiff.y * panMultiplier, 0));
+        TranslateObjectLocal(new Vector3(0, -mouseDiff.y * panMultiplier, 0));
 
         prevMouseLoc = currMouseLoc;
     }
