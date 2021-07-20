@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Godot;
@@ -50,6 +51,8 @@ public class ScriptEditor : CanvasLayer
 
         for (int lineNum = 0; lineNum < numLines; lineNum++)
         {
+            while (robot.isBusy) {}
+
             string line = textEditor.GetLine(lineNum);
             textEditor.Select(lineNum, 0, lineNum, line.Length);
             // var execute = scriptManager.Execute(line);
@@ -67,21 +70,32 @@ public class ScriptEditor : CanvasLayer
     {
         string text = args.Data;
 
-        if (text != null)
+        if (text != null && text != "")
         {
             GD.Print("Output received: ", text);
 
-            switch (text)
+            if (text.StartsWith("@print:"))
             {
-                case string s when s.StartsWith("@print"):
-                    console.PrintLine(text.Replace("@print", ""));
-                    break;
-                case string s when s.StartsWith("@command"):
-                    robot.Command(text.Replace("@command", ""));
-                    break;
+                console.PrintLine(text.Replace("@print:", ""));
+            }
+            else if (text.StartsWith("@command:"))
+            {
+                text = text.Replace("@command:", "");
+                List<string> commands = new List<string>(text.Split(' '));
+
+                string operation = commands[0];
+                commands.RemoveAt(0);
+
+                if (commands.Count > 0)
+                {
+                    robot.Command(operation, commands.ToArray());
+                }
+                else
+                {
+                    robot.Command(operation);
+                }
             }
         }
-
     }
 
     public void ProcessSysErr(object sender, DataReceivedEventArgs args)
