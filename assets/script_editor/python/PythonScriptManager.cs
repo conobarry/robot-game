@@ -48,7 +48,7 @@ public class PythonScriptManager : Node
     {
         GD.Print("Executing: ", script);
         process.StandardInput.WriteLine(script);
-        OS.DelayMsec(1000); // For some reason this is important!
+        // OS.DelayMsec(1000); // For some reason this is important!
         
         
         // streamWriter.WriteLine(script);
