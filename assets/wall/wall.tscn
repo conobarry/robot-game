@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/wall/TexturesCom_Wall_BrickRough3_4x2_1K_roughness.png" type="Texture" id=1]
+[ext_resource path="res://assets/wall/TexturesCom_Wall_BrickRough3_4x2_1K_normal.png" type="Texture" id=2]
+[ext_resource path="res://assets/wall/TexturesCom_Wall_BrickRough3_4x2_1K_albedo.png" type="Texture" id=3]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.635294, 0.635294, 0.635294, 1 )
+albedo_texture = ExtResource( 3 )
+roughness_texture = ExtResource( 1 )
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 2 )
+uv1_scale = Vector3( 4, 2, 1 )
+
+[sub_resource type="ConvexPolygonShape" id=3]
+points = PoolVector3Array( -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, -1, 1, -1, 1, -1, -1 )
+
+[node name="Wall" type="StaticBody"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 11.951, 0, 0, 0, 4.435, 0, 0, 0, 0.1, -0.0221634, 4.49664, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 0.0150827, 0, 0, 0 )
+shape = SubResource( 3 )
