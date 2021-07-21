@@ -1,0 +1,94 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://assets/ui/DebugUI.cs" type="Script" id=1]
+[ext_resource path="res://assets/Camera.cs" type="Script" id=2]
+[ext_resource path="res://assets/wall/wall.tscn" type="PackedScene" id=3]
+[ext_resource path="res://levels/test_level/TestLevel.cs" type="Script" id=4]
+[ext_resource path="res://assets/cube/cube.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/floor/floor.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/script_editor/ScriptEditor.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/robot/robot.tscn" type="PackedScene" id=8]
+
+[sub_resource type="Environment" id=1]
+ambient_light_color = Color( 1, 1, 1, 1 )
+
+[node name="TestLevel" type="Spatial"]
+script = ExtResource( 4 )
+
+[node name="ScriptEditor" parent="." instance=ExtResource( 7 )]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.451018, -0.614728, 0.647064, 0, 0.72499, 0.68876, -0.892515, -0.310643, 0.326983, 10.5753, 11.6305, 3.55996 )
+script = ExtResource( 2 )
+
+[node name="DebugUI" type="CanvasLayer" parent="."]
+script = ExtResource( 1 )
+
+[node name="DebugLabel" type="Label" parent="DebugUI"]
+margin_left = -0.0371618
+margin_right = 39.9628
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Floor" parent="." instance=ExtResource( 6 )]
+transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 0, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[node name="Robot" parent="." instance=ExtResource( 8 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -2.41128, 0.0636005, 0 )
+speed = 2.0
+rotationalSpeed = 1.5
+
+[node name="CeilingLights" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.46151, 0 )
+
+[node name="OmniLight" type="OmniLight" parent="CeilingLights"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5 )
+light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
+light_energy = 3.0
+light_indirect_energy = 4.75
+light_specular = 0.63
+omni_range = 9.32518
+
+[node name="OmniLight2" type="OmniLight" parent="CeilingLights"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5 )
+light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
+light_energy = 3.0
+light_indirect_energy = 4.75
+light_specular = 0.63
+omni_range = 9.32518
+
+[node name="OmniLight3" type="OmniLight" parent="CeilingLights"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -5 )
+light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
+light_energy = 3.0
+light_indirect_energy = 4.75
+light_specular = 0.63
+omni_range = 9.32518
+
+[node name="OmniLight4" type="OmniLight" parent="CeilingLights"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5 )
+light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
+light_energy = 3.0
+light_indirect_energy = 4.75
+light_specular = 0.63
+omni_range = 9.32518
+
+[node name="Wall" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.8441 )
+
+[node name="Wall2" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.8716 )
+
+[node name="Wall3" parent="." instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.9362, 0, 5.21746e-07 )
+
+[node name="Wall4" parent="." instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9213, 0, -5.21097e-07 )
+
+[node name="Cube" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16148, 0 )

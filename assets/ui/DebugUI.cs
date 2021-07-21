@@ -1,6 +1,6 @@
 using Godot;
 
-public class CanvasLayer : Godot.CanvasLayer
+public class DebugUI : Godot.CanvasLayer
 {
     private Robot robot;
     private Label debugLabel;
