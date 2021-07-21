@@ -1,0 +1,16 @@
+[gd_resource type="SpatialMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://imports/le_droid/textures/Pharearriere_emissive.png" type="Texture" id=1]
+
+[resource]
+resource_name = "Pharearriere"
+vertex_color_use_as_albedo = true
+params_cull_mode = 2
+albedo_color = Color( 0.735357, 0.735357, 0.735357, 1 )
+roughness = 0.6
+emission_enabled = true
+emission = Color( 0, 0, 0, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+emission_texture = ExtResource( 1 )

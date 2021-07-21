@@ -1,0 +1,36 @@
+[remap]
+
+importer="texture"
+type="StreamTexture"
+path.s3tc="res://.import/rouesavant_normal.png-cc0514a3d03558f73f856d0f72ca64ef.s3tc.stex"
+path.etc="res://.import/rouesavant_normal.png-cc0514a3d03558f73f856d0f72ca64ef.etc.stex"
+metadata={
+"imported_formats": [ "s3tc", "etc" ],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://imports/le_droid/textures/rouesavant_normal.png"
+dest_files=[ "res://.import/rouesavant_normal.png-cc0514a3d03558f73f856d0f72ca64ef.s3tc.stex", "res://.import/rouesavant_normal.png-cc0514a3d03558f73f856d0f72ca64ef.etc.stex" ]
+
+[params]
+
+compress/mode=2
+compress/lossy_quality=0.7
+compress/hdr_mode=0
+compress/bptc_ldr=0
+compress/normal_map=1
+flags/repeat=true
+flags/filter=true
+flags/mipmaps=true
+flags/anisotropic=false
+flags/srgb=2
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/HDR_as_SRGB=false
+process/invert_color=false
+stream=false
+size_limit=0
+detect_3d=false
+svg/scale=1.0
