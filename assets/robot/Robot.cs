@@ -65,13 +65,13 @@ public class Robot : KinematicBody
 
     public bool isBusy = false;
 
-    public Vector3 Forward { get { return -Transform.basis.z; } }
+    public Vector3 Forward { get { return Transform.basis.x; } }
 
-    public Vector3 Backward { get { return Transform.basis.z; } }
+    public Vector3 Backward { get { return -Transform.basis.x; } }
 
-    public Vector3 Left { get { return Transform.basis.x; } }
+    public Vector3 Left { get { return -Transform.basis.z; } }
 
-    public Vector3 Right { get { return -Transform.basis.x; } }
+    public Vector3 Right { get { return Transform.basis.z; } }
 
     public Vector2 GroundPosition
     {
