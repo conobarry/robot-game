@@ -4,21 +4,64 @@ using Godot;
 public class Robot : KinematicBody
 {
 
+    private abstract class RobotCommand
+    {
+        public bool finished = false;
+    }
+
+    private class RobotMoveCommand : RobotCommand
+    {
+        public Vector3 direction;
+
+        public float distance;
+
+        // public readonly Vector2 targetGroundPosition;
+
+        // public Vector3 target;
+
+        // public readonly Transform newTransform;
+
+        public float movedDistance;
+
+        public RobotMoveCommand(Robot robot, Vector3 direction, float distance)
+        {
+            this.direction = direction;
+            this.distance = distance;
+
+            // newTransform = robot.Transform.Translated(direction * distance);
+
+            // targetGroundPosition = GetGroundPosition(newTransform.origin);
+        }        
+    }
+
+    private class RobotTurnCommand : RobotCommand
+    {
+        public float angle;
+
+        public Vector3 axis;
+
+        public float progress;
+
+        public RobotTurnCommand(Robot robot, Vector3 axis, float angle)
+        {
+            this.axis = axis;
+            this.angle = angle;
+        }
+    }
+
     [Export]
     private Vector3 gravity = Vector3.Down * 4;
 
     [Export]
-    private int speed = 4;
+    private float speed = 1f;
 
     [Export]
-    private double rotationalSpeed = 0.85;
+    private float rotationalSpeed = 1f;
 
-    [Export]
-    private Vector3 velocity = Vector3.Zero;
 
-    // private MoveCommand moveCommand = null;
+    private Queue<RobotCommand> commands = new Queue<RobotCommand>();
 
-    private Queue<MoveCommand> commands = new Queue<MoveCommand>();
+    private RobotCommand currentCommand;
 
     public bool isBusy = false;
 
@@ -35,95 +78,19 @@ public class Robot : KinematicBody
         get { return new Vector2(Transform.origin.x, Transform.origin.z); }
     }
 
-
-    private class MoveCommand
-    {
-
-        public bool finished = false;
-
-        public Vector3 direction;
-
-        public float distance = 0;
-
-        public readonly Vector2 targetGroundPosition;
-
-        public Vector3 target;
-
-        public readonly Transform newTransform;
-
-        public float movedDistance;
-
-        // public Vector3 translation;
-
-        // public MoveCommand() : this(Direction.None, Vector3.Zero) {}
-
-        // public MoveCommand(Direction direction, Vector3 target)
-        // {
-        //     this.direction = direction;
-        //     this.newGroundPosition = target;
-        // }
-
-        // public MoveCommand(Direction direction, Transform newTransform)
-        // {
-        //     this.direction = direction;
-        //     this.newTransform = newTransform;
-        // }
-
-        public MoveCommand(Robot robot, Vector3 direction, float distance)
-        {
-            this.direction = direction;
-            this.distance = distance;
-
-            // Vector3 vectorDirection;
-
-            // switch (direction)
-            // {
-            //     case Direction.Forward:
-            //         vectorDirection = robot.Forward;
-            //         break;
-            //     case Direction.Backward:
-            //         vectorDirection = robot.Backward;
-            //         break;
-            //     default:
-            //         // Error
-            //         return;
-            // }
-
-            // vectorDirection = vectorDirection.Normalized();
-
-            // Transform t = Transform;
-            // t.origin += t.basis.x * 5;
-            // Transform = t;
-
-            newTransform = robot.Transform.Translated(direction * distance);
-
-            // GD.Print("current pos: ", Transform.origin);
-
-            targetGroundPosition = GetGroundPosition(newTransform.origin);
-
-            // translation = robot.Translation;
-        }
-        
-    }
-
     public static Vector2 GetGroundPosition(Vector3 position)
     {
         return new Vector2(position.x, position.z);
     }
 
 
-    public override void _Ready()
-    {
-        // forward = Transform.basis.z;
-    }
-
-    // private float movedDistance = 0f;
+    public override void _Ready() {}
 
     public override void _PhysicsProcess(float delta)
     {
         Vector3 thisMovement = Vector3.Zero;
 
-        bool finishedMovement = false;
+        // bool finishedMovement = false;
 
         // Apply gravity
         // thisMovement += (gravity * delta);
@@ -131,14 +98,94 @@ public class Robot : KinematicBody
 
         if (commands.Count > 0)
         {
-            MoveCommand moveCommand = commands.Peek();
+            RobotCommand command = commands.Peek();
 
-            isBusy = !moveCommand.finished;
+            isBusy = !command.finished;
 
+            switch (command)
+            {
+                case RobotMoveCommand moveCommand:
+                    thisMovement = ProcessMoveCommand(moveCommand, delta, thisMovement);
+                    break;
+                case RobotTurnCommand turnCommand:
+                    ProcessTurnCommand(turnCommand, delta);
+                    break;
+            }            
+
+            if (command.finished)
+            {
+                commands.Dequeue();
+                isBusy = false;
+                // finishedMovement = false;
+            }
+        
+        }
+
+        KinematicCollision collision = MoveAndCollide(thisMovement);
+        // if (collision != null) {GD.Print(collision.Remainder);}        
+
+        // MoveAndSlide(thisMovement);
+
+        // this.velocity += direction * speed * delta;
+
+        // Apply gravity
+        // this.velocity += gravity * delta;
+
+    }
+
+    public void MoveForward(float distance)
+    {
+        GD.Print($"Moving forward {distance}m");
+        commands.Enqueue(new RobotMoveCommand(this, Forward, distance));
+    }
+
+    public void MoveBackward(float distance)
+    {
+        GD.Print($"Moving backward {distance}m");
+        commands.Enqueue(new RobotMoveCommand(this, Backward, distance));
+    }
+
+    public void TurnRight(float angle)
+    {
+        GD.Print($"Turning right {angle}°");
+        commands.Enqueue(new RobotTurnCommand(this, Vector3.Down, Mathf.Deg2Rad(angle)));        
+    }
+
+    public void TurnLeft(float angle)
+    {
+        GD.Print($"Turning left {angle}°");
+        commands.Enqueue(new RobotTurnCommand(this, Vector3.Up, Mathf.Deg2Rad(angle)));  
+    }
+
+    public void Command(string operation, params string[] args)
+    {
+        if (args != null && args.Length > 0)
+        {
+            switch (operation)
+            {
+                case "move-forward":
+                    MoveForward(args[0].ToFloat());
+                    break;
+                case "move-backward":
+                    MoveBackward(args[0].ToFloat());
+                    break;
+                case "turn-right":
+                    TurnRight(args[0].ToFloat());
+                    break;
+                case "turn-left":
+                    TurnLeft(args[0].ToFloat());
+                    break;
+            }
+        }        
+    }
+
+    private Vector3 ProcessMoveCommand(RobotMoveCommand moveCommand, float delta, Vector3 thisMovement)
+    {
+        if (moveCommand != null)
+        {
             if (moveCommand.movedDistance < moveCommand.distance)
             {
-
-                float t = delta * 1f;                
+                float t = delta * speed;                
                 thisMovement += (moveCommand.direction * t);
                 // thisMovement += moveCommand.direction;
 
@@ -154,85 +201,52 @@ public class Robot : KinematicBody
                     float diff = moveCommand.movedDistance - moveCommand.distance;
                     thisMovement *= (1 - diff / thisMovement.Length());
 
-                    finishedMovement = true;                    
+                    moveCommand.finished = true;                    
                 }
                 else if (moveCommand.movedDistance == moveCommand.distance)
                 {
-                    finishedMovement = true;
+                    moveCommand.finished = true;
                 }               
-                
-                // Vector3 newPosition = GetGroundPosition(Transform.origin + movement);
-
-                // Vector3 newVector = moveCommand.translation.LinearInterpolate(new Vector3(0, 0, -3), t);
-                // TranslateObjectLocal(Forward * moveCommand.distance);
-                
-                // Transform = Transform.InterpolateWith(moveCommand.newTransform, t);
             }
             else
             {
-                finishedMovement = true;
-            }
-
-            // if (this.movement.direction != Movement.Direction.None)
-            // {
-            //     if (this.movement.direction == Movement.Direction.Forward)
-            //     {
-            //         direction = -Transform.basis.z;
-            //     }
-            // }
-
-            if (finishedMovement)
-            {
                 moveCommand.finished = true;
-                commands.Dequeue();
-                isBusy = false;
-                finishedMovement = false;
             }
-        
         }
 
-        // GD.Print(thisMovement);
-
-        KinematicCollision collision = MoveAndCollide(thisMovement, false);
-        // if (collision != null) {GD.Print(collision.Remainder);}        
-
-        // MoveAndSlide(thisMovement);
-
-        // this.velocity += direction * speed * delta;
-
-        // Apply gravity
-        // this.velocity += gravity * delta;
-
+        return thisMovement;
     }
 
-    public void MoveForward(float distance)
+    private void ProcessTurnCommand(RobotTurnCommand turnCommand, float delta)
     {
-        GD.Print("Moving forward ", distance);
-        commands.Enqueue(new MoveCommand(this, Forward, distance));
-    }
-
-    public void MoveBackward(float distance)
-    {
-        GD.Print("Moving backward ", distance);
-        commands.Enqueue(new MoveCommand(this, Backward, distance));
-    }
-
-    public void Command(string operation, params string[] args)
-    {
-        if (args != null && args.Length > 0)
+        if (turnCommand != null)
         {
-            switch (operation)
-            {
-                case "move-forward":
-                    MoveForward(args[0].ToInt());
-                    break;
-                case "move-backward":
-                    MoveBackward(args[0].ToInt());
-                    break;
-            }
-        }
+            float thisRotation = 0f;
 
-        
+            if (turnCommand.progress < turnCommand.angle)
+            {
+                thisRotation = delta * rotationalSpeed;
+                turnCommand.progress += thisRotation;
+
+                if (turnCommand.progress > turnCommand.angle)
+                {
+                    float diff = turnCommand.progress - turnCommand.angle;
+                    thisRotation -= diff;
+
+                    turnCommand.finished = true;
+                }
+                else if (turnCommand.progress == turnCommand.angle)
+                {
+                    turnCommand.finished = true;
+                }
+            }
+            else
+            {
+                turnCommand.finished = true;
+            }
+
+            Rotate(turnCommand.axis, thisRotation);
+        }        
     }
 
 }
