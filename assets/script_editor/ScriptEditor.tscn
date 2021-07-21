@@ -1,63 +1,134 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/ui/RunButton.cs" type="Script" id=1]
 [ext_resource path="res://assets/ui/Window.cs" type="Script" id=2]
-[ext_resource path="res://assets/ui/Titlebar.cs" type="Script" id=3]
+[ext_resource path="res://assets/ui/DragArea.cs" type="Script" id=3]
 [ext_resource path="res://assets/script_editor/Console.cs" type="Script" id=4]
 [ext_resource path="res://assets/script_editor/ScriptEditor.cs" type="Script" id=5]
+[ext_resource path="res://assets/ui/WindowResizeHandle.tscn" type="PackedScene" id=7]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.129412, 0.121569, 0.145098, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.172549, 0.164706, 0.196078, 1 )
 
 [node name="ScriptEditor" type="CanvasLayer"]
 script = ExtResource( 5 )
 
 [node name="Window" type="MarginContainer" parent="."]
-margin_left = 509.008
-margin_top = 259.544
-margin_right = 1009.01
-margin_bottom = 559.544
+anchor_left = 0.6
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -15.0
+margin_bottom = -15.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Window"]
-margin_right = 500.0
-margin_bottom = 300.0
+[node name="WindowBackground" type="Panel" parent="Window"]
+margin_right = 394.0
+margin_bottom = 445.0
+mouse_filter = 1
+
+[node name="WindowContainer" type="VBoxContainer" parent="Window/WindowBackground"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TitlebarBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
+margin_right = 394.0
+margin_bottom = 15.0
+rect_min_size = Vector2( 0, 15 )
+mouse_filter = 1
+
+[node name="TitlebarContainer" type="HBoxContainer" parent="Window/WindowBackground/WindowContainer/TitlebarBackground"]
+anchor_right = 1.0
+rect_clip_content = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Titlebar" type="Panel" parent="Window/VBoxContainer"]
-margin_right = 500.0
-margin_bottom = 10.0
-rect_min_size = Vector2( 0, 10 )
+[node name="DragArea" type="Panel" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer"]
+margin_right = 394.0
+margin_bottom = 15.0
+rect_min_size = Vector2( 0, 15 )
 size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 12.48
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="InputContainer" type="VBoxContainer" parent="Window/VBoxContainer"]
-margin_top = 14.0
-margin_right = 500.0
-margin_bottom = 300.0
-mouse_filter = 2
+[node name="Label" type="Label" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer/DragArea"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+text = "Code Window"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ContentBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
+margin_top = 19.0
+margin_right = 394.0
+margin_bottom = 445.0
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ContentContainer" type="VBoxContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EditorContainer" type="VSplitContainer" parent="Window/VBoxContainer/InputContainer"]
-margin_right = 500.0
-margin_bottom = 262.0
+[node name="InputContainer" type="VBoxContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer"]
+margin_right = 384.0
+margin_bottom = 416.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextEditor" type="TextEdit" parent="Window/VBoxContainer/InputContainer/EditorContainer"]
-margin_right = 500.0
-margin_bottom = 125.0
+[node name="EditorContainer" type="VSplitContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
+margin_right = 384.0
+margin_bottom = 392.0
+mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextEditor" type="TextEdit" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
+margin_right = 384.0
+margin_bottom = 255.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
 text = "robot.move_forward(3)
+robot.turn_right(90)
 print(\"Hello there\")
 robot.move_backward(2)"
 highlight_current_line = true
@@ -68,10 +139,33 @@ fold_gutter = true
 highlight_all_occurrences = true
 minimap_draw = true
 
-[node name="Console" type="RichTextLabel" parent="Window/VBoxContainer/InputContainer/EditorContainer"]
-margin_top = 137.0
-margin_right = 500.0
-margin_bottom = 262.0
+[node name="ConsoleBorder" type="Panel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
+margin_top = 267.0
+margin_right = 384.0
+margin_bottom = 392.0
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
+
+[node name="ConsoleBackground" type="Panel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer/ConsoleBorder"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 1.0
+margin_top = 1.0
+margin_right = -1.0
+margin_bottom = -1.0
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Console" type="RichTextLabel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer/ConsoleBorder/ConsoleBackground"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -82,12 +176,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RunButton" type="Button" parent="Window/VBoxContainer/InputContainer"]
-margin_top = 266.0
-margin_right = 500.0
-margin_bottom = 286.0
+[node name="RunButton" type="Button" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
+margin_top = 396.0
+margin_right = 384.0
+margin_bottom = 416.0
 size_flags_horizontal = 3
 text = "Run"
 script = ExtResource( 1 )
 
-[connection signal="pressed" from="Window/VBoxContainer/InputContainer/RunButton" to="Window/VBoxContainer/InputContainer/RunButton" method="OnButtonPressed"]
+[node name="WindowResizeHandle" parent="Window" instance=ExtResource( 7 )]
+visible = false
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 394.0
+margin_bottom = 445.0
+
+[connection signal="pressed" from="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/RunButton" to="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/RunButton" method="OnButtonPressed"]
