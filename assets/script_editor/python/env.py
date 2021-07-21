@@ -17,5 +17,9 @@ class robot:
         robot.command("move-forward", distance)    
     def move_backward(distance):
         robot.command("move-backward", distance)
+    def turn_right(angle):
+        robot.command("turn-right", angle)
+    def turn_left(angle):
+        robot.command("turn-left", angle)
 
 # Remember to end the file on a blank line
