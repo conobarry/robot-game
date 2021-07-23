@@ -1,11 +1,19 @@
 using Godot;
 
-public class Camera : Godot.Camera
+public class MainCamera : Godot.Camera
 {
 
     private Vector2 prevMouseLoc = Vector2.Zero;
 
     private Vector3 origin = Vector3.Zero;
+
+    private Vector3 measureStart = Vector3.Zero;
+
+    private ImmediateGeometry geo;
+
+    private Position3D position3D;
+
+    private Label tooltip;
 
     [Export]
     public float panMultiplier = 0.03f;
@@ -19,7 +27,10 @@ public class Camera : Godot.Camera
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        GD.Print(linePlaneIntersection(Vector3.Zero, Vector3.Up, new Vector3(1, 1, 1), new Vector3(1, 1, 1)));
+
+        tooltip = (Label)FindNode("Tooltip");
+        position3D = (Position3D)GetParent().FindNode("Position3D");
+        // GD.Print(linePlaneIntersection(Vector3.Zero, Vector3.Up, new Vector3(1, 1, 1), new Vector3(1, 1, 1)));
     }
 
     private void UpdateMousePosition()
@@ -34,7 +45,7 @@ public class Camera : Godot.Camera
             UpdateMousePosition();
         }
         if (Input.IsActionPressed("camera_pan"))
-        {
+        {Measure();
             Pan();
         }
 
@@ -47,9 +58,60 @@ public class Camera : Godot.Camera
         if (Input.IsActionPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
         {
             Orbit();
-        }
+        }        
+
+        Vector2 mousePos = GetViewport().GetMousePosition();
+        Vector3 pos3d = ProjectPosition(mousePos, 4.0f);
+        
+        pos3d = linePlaneIntersection(Vector3.Zero, Vector3.Up, Transform.origin, ProjectRayOrigin(mousePos));
+        // Plane dropPlane = new Plane(new Vector3(0, 1, 0), 0);
+        // pos3d = dropPlane.IntersectRay(ProjectRayOrigin(mousePos), ProjectRayNormal(mousePos)) ?? new Vector3(0, 1, 0);
+        
+        pos3d = ViewportPointToGround(mousePos) ?? new Vector3(0, 1, 0);
+
+        position3D.Translation = pos3d;
+        // GD.Print(position3D.Transform.origin);
+
+
+        
 
         base._Process(delta);
+    }
+
+    public Vector3? ViewportPointToGround(Vector2 viewportPoint)
+    {
+        Plane groundPlane = new Plane(0, 1, 0, 0);
+        Vector3 origin = ProjectRayOrigin(viewportPoint);
+        Vector3 normal = ProjectRayNormal(viewportPoint);
+        return groundPlane.IntersectRay(origin, normal);
+    }
+
+    public Vector2 GroundPointToViewport(Vector3 groundPoint)
+    {
+        return UnprojectPosition(groundPoint);
+    }
+
+    public override void _PhysicsProcess(float delta)
+    {
+        Vector2 mousePos = GetViewport().GetMousePosition();
+
+        Vector3 from = ProjectRayOrigin(mousePos);
+        Vector3 to = from + ProjectRayNormal(mousePos) * 1000f;
+
+        PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
+        Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
+        if (selection.Count > 0)
+        {
+            Node collisionShape = (Node)selection["collider"];
+
+
+
+
+            // GD.Print(collisionShape.Name);
+        }
+        
+
+        base._PhysicsProcess(delta);
     }
 
     // While the _Process function works for panning and orbiting, it doesn't seem to like zooming
@@ -64,6 +126,8 @@ public class Camera : Godot.Camera
         {
             ZoomOut();
         }
+
+        // tooltip.SetPosition(GetViewport().GetMousePosition());
 
         base._Input(@event);
     }
@@ -104,6 +168,13 @@ public class Camera : Godot.Camera
 
         float t = (planeNormal.Dot(planePoint) - planeNormal.Dot(linePoint)) / planeNormal.Dot(lineDirection.Normalized());
         return linePoint + (lineDirection.Normalized() * t);
+    }
+
+    private void Measure()
+    {
+        
+
+
     }
 
     private void ZoomIn()
