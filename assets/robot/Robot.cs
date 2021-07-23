@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-public class Robot : KinematicBody
+public class Robot : KinematicBody, IGameObject
 {
 
     private abstract class RobotCommand
@@ -48,6 +48,8 @@ public class Robot : KinematicBody
             this.angle = angle;
         }
     }
+
+    public string VisibleName { get; set; }
 
     [Export]
     private Vector3 gravity = Vector3.Down * 4;
