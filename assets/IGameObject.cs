@@ -1,0 +1,6 @@
+using Godot;
+
+interface IGameObject
+{
+    
+}
