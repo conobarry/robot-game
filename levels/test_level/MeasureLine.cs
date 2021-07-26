@@ -7,12 +7,13 @@ public class MeasureLine : ImmediateGeometry
     private Vector3 measureStart;
 
     private ToolCamera camera;
-    
+
     
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         camera = (ToolCamera) GetViewport().GetCamera();
+
         // GD.Print(GetParent());
         // camera = (Camera) GetParent<Camera>();
     }
