@@ -73,7 +73,7 @@ public class MainCamera : Godot.Camera
         // GD.Print(position3D.Transform.origin);
 
 
-        
+    
 
         base._Process(delta);
     }
@@ -104,8 +104,14 @@ public class MainCamera : Godot.Camera
         {
             Node collisionShape = (Node)selection["collider"];
 
-
-
+            if (collisionShape is IGameObject)
+            {
+                tooltip.Text = collisionShape.Name;                
+            }
+            else
+            {
+                tooltip.Text = "";
+            }
 
             // GD.Print(collisionShape.Name);
         }
