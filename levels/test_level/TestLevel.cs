@@ -8,18 +8,20 @@ public class TestLevel : Spatial
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		ScriptEditor scriptEditor = (ScriptEditor)FindNode("ScriptEditor");
-				
-		Robot robot = (Robot)FindNode("Robot");		
+		ScriptEditor scriptEditor = (ScriptEditor)FindNode("ScriptEditor");				
+		Robot robot = (Robot)FindNode("Robot");
+
+		
+
+		// Resource plus = ResourceLoader.Load("res://plus.png");
+		// Input.SetCustomMouseCursor(plus);
 
 		cursor = (Sprite)FindNode("Cursor");
+		HUD hud = (HUD)FindNode("HUD");
 
-		Resource plus = ResourceLoader.Load("res://plus.png");
-		Input.SetCustomMouseCursor(plus);
-
+		// Hide os cursor
 		Input.SetMouseMode(Input.MouseMode.Hidden);
-
-		GD.Print(robot.Name);
+		hud.SetCursor(Cursor.Pointer);
 				
 		scriptEditor._Init(robot);
 	}
