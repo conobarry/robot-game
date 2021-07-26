@@ -1,6 +1,6 @@
 [gd_resource type="ArrayMesh" load_steps=2 format=2]
 
-[ext_resource path="res://imports/le_droid/scene/Partiemetal.tres" type="Material" id=1]
+[ext_resource path="res://imports/le_droid/scene/metal_part.tres" type="Material" id=1]
 
 [resource]
 resource_name = "curiosityLP7"
