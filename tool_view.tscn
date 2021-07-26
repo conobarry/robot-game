@@ -21,8 +21,8 @@ gravity_scale = 0.0
 
 [node name="OmniLight" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.77399, -4.1331 )
-visible = false
 light_energy = 7.81
+editor_only = true
 
 [node name="MeasureLine" type="ImmediateGeometry" parent="."]
 transform = Transform( 1, 0, 5.96046e-08, 0, 1, -1.49012e-08, 7.45058e-08, 0, 1, 1.90735e-06, 1.90735e-06, -4.76837e-07 )
