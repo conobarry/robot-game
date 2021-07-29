@@ -8,3 +8,5 @@ lib/
 
 # Mono folder
 .mono/
+
+mono_crash*
