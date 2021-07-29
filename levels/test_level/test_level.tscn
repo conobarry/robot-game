@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://assets/ui/DebugUI.cs" type="Script" id=1]
 [ext_resource path="res://assets/MainCamera.cs" type="Script" id=2]
@@ -9,8 +9,9 @@
 [ext_resource path="res://assets/script_editor/ScriptEditor.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/robot/robot.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/ui/HUD.cs" type="Script" id=9]
-[ext_resource path="res://cursor.tscn" type="PackedScene" id=10]
-[ext_resource path="res://tool_view.tscn" type="PackedScene" id=13]
+[ext_resource path="res://assets/ui/cursors/cursor.tscn" type="PackedScene" id=10]
+[ext_resource path="res://assets/ui/menus/pause_menu.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/ui/tools/tool_view.tscn" type="PackedScene" id=13]
 
 [sub_resource type="Environment" id=1]
 ambient_light_color = Color( 1, 1, 1, 1 )
@@ -19,25 +20,30 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 script = ExtResource( 4 )
 
 [node name="MainCamera" type="Camera" parent="."]
-transform = Transform( 0.451018, -0.614728, 0.647064, 0, 0.72499, 0.688759, -0.892515, -0.310643, 0.326984, 10.5753, 11.6305, 3.55996 )
+transform = Transform( 0.707107, -0.454519, 0.541675, 0, 0.766044, 0.642788, -0.707107, -0.454519, 0.541675, 15.7595, 23.543, 15.7595 )
+projection = 1
 current = true
+size = 30.0
 script = ExtResource( 2 )
 
-[node name="Floor" parent="." instance=ExtResource( 6 )]
+[node name="Level" type="Spatial" parent="."]
+
+[node name="Floor" parent="Level" instance=ExtResource( 6 )]
 transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, -0.0772341, 0 )
 
-[node name="Robot" parent="." instance=ExtResource( 8 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -2.41128, -0.0287505, 0 )
+[node name="Robot" parent="Level" instance=ExtResource( 8 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 9.17401, -0.0287505, 0 )
+input_capture_on_drag = false
 speed = 2.0
 rotationalSpeed = 1.5
 
-[node name="Cube" parent="." instance=ExtResource( 5 )]
+[node name="Cube" parent="Level" instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16148, 0 )
 
-[node name="CeilingLights" type="Spatial" parent="."]
+[node name="CeilingLights" type="Spatial" parent="Level"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.46151, 0 )
 
-[node name="OmniLight" type="OmniLight" parent="CeilingLights"]
+[node name="OmniLight" type="OmniLight" parent="Level/CeilingLights"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5 )
 light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
 light_energy = 3.0
@@ -45,7 +51,7 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="OmniLight2" type="OmniLight" parent="CeilingLights"]
+[node name="OmniLight2" type="OmniLight" parent="Level/CeilingLights"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5 )
 light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
 light_energy = 3.0
@@ -53,7 +59,7 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="OmniLight3" type="OmniLight" parent="CeilingLights"]
+[node name="OmniLight3" type="OmniLight" parent="Level/CeilingLights"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -5 )
 light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
 light_energy = 3.0
@@ -61,7 +67,7 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="OmniLight4" type="OmniLight" parent="CeilingLights"]
+[node name="OmniLight4" type="OmniLight" parent="Level/CeilingLights"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5 )
 light_color = Color( 0.960784, 0.964706, 0.827451, 1 )
 light_energy = 3.0
@@ -69,19 +75,18 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="Walls" type="Spatial" parent="."]
-visible = false
+[node name="Walls" type="Spatial" parent="Level"]
 
-[node name="Wall" parent="Walls" instance=ExtResource( 3 )]
+[node name="Wall" parent="Level/Walls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.8441 )
 
-[node name="Wall2" parent="Walls" instance=ExtResource( 3 )]
+[node name="Wall2" parent="Level/Walls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.8716 )
 
-[node name="Wall3" parent="Walls" instance=ExtResource( 3 )]
+[node name="Wall3" parent="Level/Walls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.9362, 0, 5.21746e-07 )
 
-[node name="Wall4" parent="Walls" instance=ExtResource( 3 )]
+[node name="Wall4" parent="Level/Walls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9213, 0, -5.21097e-07 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -94,8 +99,6 @@ margin_bottom = 576.0
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource( 9 )
 
-[node name="ScriptEditor" parent="HUD" instance=ExtResource( 7 )]
-
 [node name="DebugUI" type="CanvasLayer" parent="HUD"]
 script = ExtResource( 1 )
 
@@ -107,5 +110,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Cursor" parent="HUD" instance=ExtResource( 10 )]
-z_index = 9
+[node name="ScriptEditor" parent="HUD" instance=ExtResource( 7 )]
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="HUD"]
+
+[node name="PauseMenu" parent="HUD/CanvasLayer2" instance=ExtResource( 11 )]
+visible = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="HUD"]
+
+[node name="Cursor" parent="HUD/CanvasLayer" instance=ExtResource( 10 )]
