@@ -15,7 +15,7 @@ public class ScriptEditor : DebugUI
 
     private PythonScriptManager scriptManager;
 
-    private TextEdit textEditor;
+    private CodeEditor codeEditor;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -23,7 +23,7 @@ public class ScriptEditor : DebugUI
         // this.runButton = GetNode<RunButton>(new NodePath("Window/Panel/VBoxContainer/InputContainer/RunButton"));
         this.runButton = (RunButton)FindNode("RunButton");
         // this.textEditor = GetNode<TextEdit>(new NodePath("Window/Panel/VBoxContainer/InputContainer/EditorContainer/TextEditor"));
-        this.textEditor = (TextEdit)FindNode("TextEditor");
+        this.codeEditor = (CodeEditor)FindNode("CodeEditor");
         // this.console = GetNode<Console>(new NodePath("Window/Panel/VBoxContainer/InputContainer/EditorContainer/Console"));
         this.console = (Console)FindNode("Console");
         this.scriptManager = new PythonScriptManager();
@@ -49,17 +49,17 @@ public class ScriptEditor : DebugUI
         scriptManager._InitSharp(robot, console);
         // scriptManager._InitIron(robot, console);
 
-        textEditor.Readonly = true;
+        codeEditor.Readonly = true;
 
-        string script = textEditor.Text;
-        int numLines = textEditor.GetLineCount();
+        string script = codeEditor.Text;
+        int numLines = codeEditor.GetLineCount();
 
         for (int lineNum = 0; lineNum < numLines; lineNum++)
         {
             while (robot.isBusy) {}
 
-            string line = textEditor.GetLine(lineNum);
-            textEditor.Select(lineNum, 0, lineNum, line.Length);
+            string line = codeEditor.GetLine(lineNum);
+            codeEditor.Select(lineNum, 0, lineNum, line.Length);
             // var execute = scriptManager.Execute(line);
             // robot.isBusy = true;
             await Task.Run(() => scriptManager.Execute(line));
@@ -67,8 +67,8 @@ public class ScriptEditor : DebugUI
             GD.Print("Line executed");
         }
 
-        textEditor.Deselect();
-        textEditor.Readonly = false;
+        codeEditor.Deselect();
+        codeEditor.Readonly = false;
 
         runButton.Disabled = false;
 
