@@ -14,7 +14,8 @@ public class Camera : Godot.Camera
         Plane groundPlane = new Plane(0, 1, 0, 0);
         Vector3 origin = ProjectRayOrigin(viewportPoint);
         Vector3 normal = ProjectRayNormal(viewportPoint);
-        return groundPlane.IntersectRay(origin, normal);
+        Vector3? groundPoint = groundPlane.IntersectRay(origin, normal);
+        return groundPoint;
     }
 
     public Vector2 GroundPointToViewport(Vector3 groundPoint)
