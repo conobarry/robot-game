@@ -1,15 +1,17 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://ToolView.cs" type="Script" id=1]
+[ext_resource path="res://assets/ui/tools/ToolView.cs" type="Script" id=1]
 [ext_resource path="res://levels/test_level/MeasureLine.cs" type="Script" id=2]
-[ext_resource path="res://assets/ToolCamera.cs" type="Script" id=3]
+[ext_resource path="res://assets/ui/tools/ToolCamera.cs" type="Script" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 flags_disable_ambient_light = true
+albedo_color = Color( 0.905882, 0.121569, 0.121569, 1 )
 
 [node name="ToolView" type="ViewportContainer"]
+mouse_filter = 2
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false

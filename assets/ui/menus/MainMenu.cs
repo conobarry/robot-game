@@ -19,10 +19,13 @@ public class MainMenu : Control
         this.quitButton = (MainMenuButton)FindNode("QuitButton");
 
         playButton.ButtonPressed += PlayButtonPressed;
+        quitButton.ButtonPressed += QuitButtonPressed;
     }
 
     private void PlayButtonPressed(object sender, EventArgs args)
     {
+        // GetTree().GetGame().LoadScene("res://levels/test_level/test_level.tscn");
+        // GD.Print(GetTree().GetGame().Name);
         GetTree().ChangeScene("res://levels/test_level/test_level.tscn");
     }
 
