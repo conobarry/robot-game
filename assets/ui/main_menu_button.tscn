@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/fonts/Comfortaa_24.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/ui/MainMenuButton.cs" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=3]
+border_width_left = 15
+
+[sub_resource type="StyleBoxFlat" id=2]
+border_width_left = 15
+
+[node name="MainMenuButton" type="ToolButton"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/hover = SubResource( 3 )
+custom_styles/pressed = SubResource( 2 )
+custom_fonts/font = ExtResource( 1 )
+text = "Button"
+align = 0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
