@@ -14,11 +14,20 @@ public class Window : MarginContainer
         titlebar.Drag += Drag;
     }
 
-    
-    
     private void Drag(object sender, InputEventMouseMotion args)
     {
-        RectPosition += args.Relative;
+        Vector2 newPosition = RectPosition + args.Relative;
+
+        Vector2 maxSize = GetViewport().GetVisibleRect().Size;
+
+        GD.Print(RectSize.x);
+
+        if (newPosition.x < 0) { newPosition.x = 0; }
+        if (newPosition.y < 0) { newPosition.y = 0; }
+        if (newPosition.x + RectSize.x > maxSize.x) { newPosition.x = maxSize.x - RectSize.x; }
+        if (newPosition.y + RectSize.y > maxSize.y) { newPosition.y = maxSize.y - RectSize.y; }
+
+        RectPosition = newPosition;      
     }
 
    
