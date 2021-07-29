@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/ui/cursors/hand.png" type="Texture" id=1]
+[ext_resource path="res://assets/ui/cursors/Cursor.cs" type="Script" id=2]
+
+[node name="Cursor" type="Control" groups=[
+"cursor",
+]]
+pause_mode = 2
+mouse_filter = 2
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( -6, 0 )
+
+[node name="CenterContainer" type="CenterContainer" parent="Sprite"]
+margin_top = 8.0
+margin_right = 40.0
+margin_bottom = 8.0
+mouse_filter = 2
+use_top_left = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Sprite/CenterContainer"]
+margin_top = -26.0
+margin_bottom = 26.0
+mouse_filter = 2
+custom_constants/separation = 24
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UpperTooltip" type="Label" parent="Sprite/CenterContainer/VBoxContainer"]
+margin_bottom = 14.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LowerTooltip" type="Label" parent="Sprite/CenterContainer/VBoxContainer"]
+margin_top = 38.0
+margin_bottom = 52.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
