@@ -1,11 +1,14 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/ui/RunButton.cs" type="Script" id=1]
 [ext_resource path="res://assets/ui/Window.cs" type="Script" id=2]
 [ext_resource path="res://assets/ui/DragArea.cs" type="Script" id=3]
 [ext_resource path="res://assets/script_editor/Console.cs" type="Script" id=4]
 [ext_resource path="res://assets/script_editor/ScriptEditor.cs" type="Script" id=5]
+[ext_resource path="res://assets/fonts/roboto_mono_12.tres" type="DynamicFont" id=6]
 [ext_resource path="res://assets/ui/WindowResizeHandle.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/fonts/Montserrat.tres" type="DynamicFont" id=8]
+[ext_resource path="res://assets/script_editor/CodeEditor.cs" type="Script" id=9]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.129412, 0.121569, 0.145098, 1 )
@@ -44,12 +47,13 @@ __meta__ = {
 
 [node name="TitlebarBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
 margin_right = 394.0
-margin_bottom = 15.0
-rect_min_size = Vector2( 0, 15 )
+margin_bottom = 20.0
+rect_min_size = Vector2( 0, 20 )
 mouse_filter = 1
 
 [node name="TitlebarContainer" type="HBoxContainer" parent="Window/WindowBackground/WindowContainer/TitlebarBackground"]
 anchor_right = 1.0
+anchor_bottom = 1.0
 rect_clip_content = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -59,7 +63,7 @@ __meta__ = {
 
 [node name="DragArea" type="Panel" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer"]
 margin_right = 394.0
-margin_bottom = 15.0
+margin_bottom = 20.0
 rect_min_size = Vector2( 0, 15 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -70,10 +74,11 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer/DragArea"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_top = 5.0
 mouse_filter = 1
+custom_fonts/font = ExtResource( 8 )
 text = "Code Window"
 align = 1
 valign = 1
@@ -82,7 +87,7 @@ __meta__ = {
 }
 
 [node name="ContentBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
-margin_top = 19.0
+margin_top = 24.0
 margin_right = 394.0
 margin_bottom = 445.0
 mouse_filter = 1
@@ -104,7 +109,7 @@ __meta__ = {
 
 [node name="InputContainer" type="VBoxContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer"]
 margin_right = 384.0
-margin_bottom = 416.0
+margin_bottom = 411.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -113,7 +118,7 @@ __meta__ = {
 
 [node name="EditorContainer" type="VSplitContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
 margin_right = 384.0
-margin_bottom = 392.0
+margin_bottom = 387.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -121,12 +126,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextEditor" type="TextEdit" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
+[node name="CodeEditor" type="TextEdit" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
 margin_right = 384.0
-margin_bottom = 255.0
+margin_bottom = 252.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
+custom_fonts/font = ExtResource( 6 )
 text = "robot.move_forward(3)
 robot.turn_right(90)
 print(\"Hello there\")
@@ -135,14 +141,13 @@ highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
 breakpoint_gutter = true
-fold_gutter = true
 highlight_all_occurrences = true
-minimap_draw = true
+script = ExtResource( 9 )
 
 [node name="ConsoleBorder" type="Panel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
-margin_top = 267.0
+margin_top = 264.0
 margin_right = 384.0
-margin_bottom = 392.0
+margin_bottom = 387.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -177,9 +182,9 @@ __meta__ = {
 }
 
 [node name="RunButton" type="Button" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
-margin_top = 396.0
+margin_top = 391.0
 margin_right = 384.0
-margin_bottom = 416.0
+margin_bottom = 411.0
 size_flags_horizontal = 3
 text = "Run"
 script = ExtResource( 1 )
