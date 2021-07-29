@@ -11,7 +11,8 @@ public class Console : RichTextLabel
     
     public void Print(string text)
     {
-        this.AddText(text);
+        // this.AddText(text);
+        this.AppendBbcode($"[code]{text}[/code]");
     }
 
     public void PrintLine(string text)
@@ -22,7 +23,7 @@ public class Console : RichTextLabel
     
     public void PrintError(string text)
     {
-        this.AppendBbcode($"\n[color=red]{text}[/color]");
+        this.Print($"\n[color=red]{text}[/color]");
     }
 
 }
