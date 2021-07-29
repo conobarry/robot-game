@@ -15,6 +15,8 @@ public class MainCamera : Camera
 
     private Cursor cursor;
 
+    private Spatial level;
+
     private Vector2 prevMouseLoc = Vector2.Zero;
 
     private Vector3 orbitOrigin = Vector3.Zero;
@@ -23,6 +25,7 @@ public class MainCamera : Camera
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        
     }
 
     public void _Init(Cursor cursor)
@@ -74,7 +77,7 @@ public class MainCamera : Camera
 
     public override void _PhysicsProcess(float delta)
     {        
-        Highlight();
+        // Highlight();
 
         base._PhysicsProcess(delta);
     }
@@ -110,47 +113,58 @@ public class MainCamera : Camera
 
     private void Orbit()
     {
+        // orbitOrigin = Projection == ProjectionEnum.Perspective ? orbitOrigin : Vector3.Zero;
+
         Vector2 currMouseLoc = GetViewport().GetMousePosition();
         Vector2 mouseDiff = prevMouseLoc - currMouseLoc;
 
-        float angle = Mathf.Pi / 360;
+        float angle = Mathf.Pi / 360;        
 
-        // This works pretty well but makes the camera zoom out as it orbits.
-        //  Could be due to the angle? I just chose 1 degree cause it seemed right.
-        Translate(new Vector3(orbitMultiplier * mouseDiff.x * (Mathf.Cos(angle) + orbitOrigin.x), 0, orbitMultiplier * mouseDiff.x * (Mathf.Sin(angle) + orbitOrigin.z)));
-        LookAt(orbitOrigin, Vector3.Up);        
+        if (Projection == ProjectionEnum.Perspective)
+        {            
+            // This works pretty well but makes the camera zoom out as it orbits.
+            Translate(new Vector3(orbitMultiplier * mouseDiff.x * (Mathf.Cos(angle) + orbitOrigin.x), 0, orbitMultiplier * mouseDiff.x * (Mathf.Sin(angle) + orbitOrigin.z)));
+            LookAt(orbitOrigin, Vector3.Up);   
+        }
+        else if (Projection == ProjectionEnum.Orthogonal)
+        {
+            // GlobalRotate(Vector3.Up, angle);
+            Translate(new Vector3(orbitMultiplier * mouseDiff.x * (Mathf.Cos(angle) + orbitOrigin.x), 0, orbitMultiplier * mouseDiff.x * (Mathf.Sin(angle) + orbitOrigin.z)));
+            LookAt(orbitOrigin, Vector3.Up);  
+        }
 
         prevMouseLoc = currMouseLoc;
-    }
-
-    private void Highlight()
-    {
-        Vector2 mousePos = GetViewport().GetMousePosition();
-
-        Vector3 from = ProjectRayOrigin(mousePos);
-        Vector3 to = from + ProjectRayNormal(mousePos) * 1000f;
-
-        PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
-        Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
         
-        if (selection.Count > 0)
-        {
-            Node collisionShape = (Node)selection["collider"];
-
-            if (collisionShape is ICodeObject)
-            {                
-                cursor.TooltipUpper.Text = collisionShape.Name;
-                ICodeObject codeobject = (ICodeObject) collisionShape;
-                codeobject.Highlight();
-            }
-            else
-            {
-                cursor.TooltipUpper.Text = "";
-            }
-
-            // GD.Print(collisionShape.Name);
-        }
     }
+
+    // private void Highlight()
+    // {
+    //     Vector2 mousePos = GetViewport().GetMousePosition();
+
+    //     Vector3 from = ProjectRayOrigin(mousePos);
+    //     Vector3 to = from + ProjectRayNormal(mousePos) * 1000f;
+
+    //     PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
+    //     Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
+        
+    //     if (selection.Count > 0)
+    //     {
+    //         Node collisionShape = (Node)selection["collider"];
+
+    //         if (collisionShape is ICodeObject)
+    //         {                
+    //             cursor.TooltipUpper.Text = collisionShape.Name;
+    //             ICodeObject codeobject = (ICodeObject) collisionShape;
+    //             codeobject.Highlight();
+    //         }
+    //         else
+    //         {
+    //             cursor.TooltipUpper.Text = "";
+    //         }
+
+    //         // GD.Print(collisionShape.Name);
+    //     }
+    // }
 
     // Finds the intersection point between a line and a plane
     private Vector3 linePlaneIntersection(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
@@ -166,12 +180,26 @@ public class MainCamera : Camera
 
     private void ZoomIn()
     {
-        TranslateObjectLocal(new Vector3(0, 0, -zoomStepping));
+        if (Projection == ProjectionEnum.Perspective)
+        {
+            TranslateObjectLocal(new Vector3(0, 0, -zoomStepping));
+        }
+        else if (Projection == ProjectionEnum.Orthogonal)
+        {
+            Size -= zoomStepping;
+        }        
     }
 
     private void ZoomOut()
     {
-        TranslateObjectLocal(new Vector3(0, 0, zoomStepping));
+        if (Projection == ProjectionEnum.Perspective)
+        {
+            TranslateObjectLocal(new Vector3(0, 0, zoomStepping));
+        }
+        else if (Projection == ProjectionEnum.Orthogonal)
+        {
+            Size += zoomStepping;
+        }  
     }
 
 }
