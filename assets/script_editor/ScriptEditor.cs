@@ -27,7 +27,6 @@ public class ScriptEditor : DebugUI
         // this.console = GetNode<Console>(new NodePath("Window/Panel/VBoxContainer/InputContainer/EditorContainer/Console"));
         this.console = (Console)FindNode("Console");
         this.scriptManager = new PythonScriptManager();
-
     }
 
     public ScriptEditor _Init(Robot robot)
