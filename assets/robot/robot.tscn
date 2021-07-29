@@ -31,6 +31,7 @@ points = PoolVector3Array( 10.6766, -2.04655, 14.6938, 10.8172, -2.04655, 14.605
 extents = Vector3( 0.23287, 0.236976, 1 )
 
 [node name="Robot" type="KinematicBody"]
+input_capture_on_drag = true
 script = ExtResource( 11 )
 
 [node name="RootNode (gltf orientation matrix)" type="Spatial" parent="."]

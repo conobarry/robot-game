@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-public class Robot : KinematicBody, ICodeObject
+public class Robot : KinematicBody, ICodeObject<Robot>
 {
 
     private abstract class RobotCommand
@@ -65,9 +65,7 @@ public class Robot : KinematicBody, ICodeObject
 
     private RobotCommand currentCommand;
 
-    private List<MeshInstance> highlightMeshes = new List<MeshInstance>();
-
-    private Material highlightMaterial;
+    // private Material highlightMaterial;
 
     public bool isBusy = false;
 
@@ -89,12 +87,16 @@ public class Robot : KinematicBody, ICodeObject
         return new Vector2(position.x, position.z);
     }
 
-    public string CodeName { get; set; }
+    public string CodeName { get { return "robot"; } }
 
+    public List<MeshInstance> HighlightMeshes { get; private set; }
+
+    public Material HighlightMaterial { get; private set; }
 
     public override void _Ready()
     {
-        highlightMaterial = GD.Load<Material>("res://outline_material.tres");
+        HighlightMaterial = GD.Load<Material>("res://assets/outline_material.tres");
+        HighlightMeshes = new List<MeshInstance>();
 
         Spatial meshesNode = (Spatial) FindNode("Meshes");
 
@@ -102,9 +104,12 @@ public class Robot : KinematicBody, ICodeObject
         {
             if (child is MeshInstance && child.IsInGroup("highlightable"))
             {
-                highlightMeshes.Add((MeshInstance) child);
+                HighlightMeshes.Add((MeshInstance) child);
             }
         }
+
+        Connect("mouse_entered", this, nameof(OnMouseEnter));
+        Connect("mouse_exited", this, nameof(OnMouseExit));
     }
 
     public override void _PhysicsProcess(float delta)
@@ -154,6 +159,22 @@ public class Robot : KinematicBody, ICodeObject
 
     }
 
+    private void OnMouseEnter()
+    {
+        // Cursor cursor = (Cursor) GetTree().GetNodesInGroup("cursor")[0];
+        // cursor.TooltipUpper.Text = CodeName;
+
+        ICodeObject<Robot> codeObject = this;
+        codeObject.OnMouseEnter();
+        // codeObject.Highlight();
+    }
+
+    private void OnMouseExit()
+    {
+        ICodeObject<Robot> codeObject = this;
+        codeObject.OnMouseExit();
+    }
+
     public void MoveForward(float distance)
     {
         GD.Print($"Moving forward {distance}m");
@@ -198,23 +219,7 @@ public class Robot : KinematicBody, ICodeObject
                     break;
             }
         }        
-    }
-
-    public void Highlight()
-    {
-        foreach (MeshInstance mesh in highlightMeshes)
-        {
-            mesh.GetActiveMaterial(0).NextPass = highlightMaterial;
-        }
-    }
-
-    public void RemoveHighlight()
-    {
-        foreach (MeshInstance mesh in highlightMeshes)
-        {
-            mesh.MaterialOverride.NextPass = null;
-        }
-    }
+    } 
 
     private Vector3 ProcessMoveCommand(RobotMoveCommand moveCommand, float delta, Vector3 thisMovement)
     {
