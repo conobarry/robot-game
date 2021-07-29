@@ -8,7 +8,7 @@ public class DebugUI : Godot.CanvasLayer
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        this.robot = GetParent().GetNode<Robot>(new NodePath("Robot"));
+        this.robot = (Robot) GetTree().CurrentScene.FindNode("Robot");
         this.debugLabel = GetNode<Label>(new NodePath("DebugLabel"));
     }
 
