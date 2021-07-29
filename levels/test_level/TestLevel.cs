@@ -2,6 +2,8 @@ using Godot;
 
 public class TestLevel : Spatial
 {
+	PauseMenu pauseMenu;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()	
 	{
@@ -19,6 +21,18 @@ public class TestLevel : Spatial
 
 		ToolView toolView = (ToolView) FindNode("ToolView");
 		toolView._Init(cursor);
+
+		pauseMenu = (PauseMenu) FindNode("PauseMenu");
+		// pauseMenu.Visible = false;
+	}
+
+	public override void _Process(float delta)
+	{
+		if (Input.IsActionJustPressed("pause"))
+		{
+			pauseMenu.Popup_();
+			GetTree().Paused = true;
+		}
 	}
 
 }
