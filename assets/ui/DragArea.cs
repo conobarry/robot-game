@@ -13,6 +13,8 @@ public class DragArea : Panel
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        Connect("mouse_entered", this, nameof(OnMouseEnter));
+        Connect("mouse_exited", this, nameof(OnMouseExit));
     }
 
     public override void _GuiInput(InputEvent @event)    
@@ -23,13 +25,14 @@ public class DragArea : Panel
 
             if (mouseEvent.ButtonIndex == (int)ButtonList.Left)
             {
-
                 if (mouseEvent.Pressed)
                 {
+                    GetTree().GetCursor().SetCursor(CursorType.Grab);
                     isDragActive = true;
                 }
                 else
                 {
+                    GetTree().GetCursor().SetCursor(CursorType.Hand);
                     isDragActive = false;
                 }
             }
@@ -57,5 +60,16 @@ public class DragArea : Panel
             handler(this, args);
         }
     }
+
+    private void OnMouseEnter()
+    {
+        GetTree().GetCursor().SetCursor(CursorType.Hand);
+    }
+
+    private void OnMouseExit()
+    {
+        GetTree().GetCursor().SetCursor(CursorType.Default);
+    }
+
 
 }
