@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/ui/DebugUI.cs" type="Script" id=1]
 [ext_resource path="res://assets/MainCamera.cs" type="Script" id=2]
@@ -9,127 +9,30 @@
 [ext_resource path="res://assets/script_editor/ScriptEditor.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/robot/robot.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/ui/HUD.cs" type="Script" id=9]
-[ext_resource path="res://assets/ui/cursors/plus.png" type="Texture" id=10]
-[ext_resource path="res://assets/ui/cursors/arrow.png" type="Texture" id=11]
-[ext_resource path="res://levels/test_level/ToolViewport.cs" type="Script" id=12]
+[ext_resource path="res://cursor.tscn" type="PackedScene" id=10]
 [ext_resource path="res://tool_view.tscn" type="PackedScene" id=13]
-[ext_resource path="res://assets/ui/cursors/ruler.png" type="Texture" id=14]
-[ext_resource path="res://assets/ui/cursors/pointer.png" type="Texture" id=15]
-[ext_resource path="res://assets/ui/cursors/beam.png" type="Texture" id=16]
 
 [sub_resource type="Environment" id=1]
 ambient_light_color = Color( 1, 1, 1, 1 )
 
-[sub_resource type="SphereMesh" id=2]
-
 [node name="TestLevel" type="Spatial"]
 script = ExtResource( 4 )
-
-[node name="ToolViewportContainer" type="ViewportContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ToolViewport" type="Viewport" parent="ToolViewportContainer"]
-size = Vector2( 1024, 576 )
-own_world = true
-transparent_bg = true
-handle_input_locally = false
-render_target_update_mode = 3
-script = ExtResource( 12 )
-
-[node name="ToolView" parent="ToolViewportContainer/ToolViewport" instance=ExtResource( 13 )]
 
 [node name="MainCamera" type="Camera" parent="."]
 transform = Transform( 0.451018, -0.614728, 0.647064, 0, 0.72499, 0.688759, -0.892515, -0.310643, 0.326984, 10.5753, 11.6305, 3.55996 )
 current = true
 script = ExtResource( 2 )
 
-[node name="HUD" type="CanvasLayer" parent="MainCamera"]
-script = ExtResource( 9 )
-
-[node name="ScriptEditor" parent="MainCamera/HUD" instance=ExtResource( 7 )]
-
-[node name="DebugUI" type="CanvasLayer" parent="MainCamera/HUD"]
-script = ExtResource( 1 )
-
-[node name="DebugLabel" type="Label" parent="MainCamera/HUD/DebugUI"]
-margin_left = -0.0371618
-margin_right = 39.9628
-margin_bottom = 14.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Line2D" type="Line2D" parent="MainCamera/HUD"]
-
-[node name="CrossCursor" type="Sprite" parent="MainCamera/HUD"]
-visible = false
-texture = ExtResource( 10 )
-
-[node name="Tooltip" type="Label" parent="MainCamera/HUD/CrossCursor"]
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 45.0
-margin_bottom = 19.0
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 1
-text = "Test"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Cursor" type="Sprite" parent="MainCamera/HUD"]
-texture = ExtResource( 11 )
-offset = Vector2( 12, 12 )
-
-[node name="Tooltip" type="Label" parent="MainCamera/HUD/Cursor"]
-margin_left = -0.0324478
-margin_top = 20.7595
-margin_right = 39.9676
-margin_bottom = 34.7595
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 1
-text = "Test"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ArrowCursor" type="Sprite" parent="MainCamera/HUD"]
-visible = false
-texture = ExtResource( 11 )
-offset = Vector2( 12, 12 )
-
-[node name="MeasureCursor" type="Sprite" parent="MainCamera/HUD"]
-visible = false
-texture = ExtResource( 14 )
-offset = Vector2( 7, 11 )
-
-[node name="PointerCursor" type="Sprite" parent="MainCamera/HUD"]
-visible = false
-texture = ExtResource( 15 )
-offset = Vector2( 6, 12 )
-
-[node name="BeamCursor" type="Sprite" parent="MainCamera/HUD"]
-visible = false
-texture = ExtResource( 16 )
-offset = Vector2( 1, 1 )
-
 [node name="Floor" parent="." instance=ExtResource( 6 )]
 transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, -0.0772341, 0 )
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 1 )
 
 [node name="Robot" parent="." instance=ExtResource( 8 )]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -2.41128, -0.0287505, 0 )
 speed = 2.0
 rotationalSpeed = 1.5
+
+[node name="Cube" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16148, 0 )
 
 [node name="CeilingLights" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.46151, 0 )
@@ -166,30 +69,43 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="Wall" parent="." instance=ExtResource( 3 )]
+[node name="Walls" type="Spatial" parent="."]
+visible = false
+
+[node name="Wall" parent="Walls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.8441 )
-visible = false
 
-[node name="Wall2" parent="." instance=ExtResource( 3 )]
+[node name="Wall2" parent="Walls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.8716 )
-visible = false
 
-[node name="Wall3" parent="." instance=ExtResource( 3 )]
+[node name="Wall3" parent="Walls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.9362, 0, 5.21746e-07 )
-visible = false
 
-[node name="Wall4" parent="." instance=ExtResource( 3 )]
+[node name="Wall4" parent="Walls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9213, 0, -5.21097e-07 )
-visible = false
 
-[node name="Cube" parent="." instance=ExtResource( 5 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16148, 0 )
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
 
-[node name="Position3D" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.59111, 0 )
-visible = false
+[node name="ToolView" parent="." instance=ExtResource( 13 )]
+margin_right = 1024.0
+margin_bottom = 576.0
 
-[node name="MeshInstance" type="MeshInstance" parent="Position3D"]
-transform = Transform( 0.2, 1.49012e-08, 1.94289e-16, -1.49012e-08, 0.2, 3.72529e-09, 8.32667e-17, -3.72529e-09, 0.2, 0, 0, 0 )
-mesh = SubResource( 2 )
-material/0 = null
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource( 9 )
+
+[node name="ScriptEditor" parent="HUD" instance=ExtResource( 7 )]
+
+[node name="DebugUI" type="CanvasLayer" parent="HUD"]
+script = ExtResource( 1 )
+
+[node name="DebugLabel" type="Label" parent="HUD/DebugUI"]
+margin_left = -0.0371618
+margin_right = 39.9628
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Cursor" parent="HUD" instance=ExtResource( 10 )]
+z_index = 9
