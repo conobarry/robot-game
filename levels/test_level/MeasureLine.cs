@@ -1,19 +1,26 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 public class MeasureLine : ImmediateGeometry
 {
 
-    private Vector3 measureStart = Vector3.Zero;
+    [Export]
+    public float Thickness = 0.1f;
 
-    private ToolCamera camera;
+    private Vector3? measureStart = null;
+
+    private ToolCamera toolCamera;
+
+    private Camera mainCamera; 
 
     private Cursor cursor;
     
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        camera = (ToolCamera) GetViewport().GetCamera();
+        toolCamera = (ToolCamera) GetViewport().GetCamera();
+        mainCamera = (Camera) GetTree().Root.GetCamera();
     }
 
     public void _Init(Cursor cursor)
@@ -23,32 +30,71 @@ public class MeasureLine : ImmediateGeometry
 
     public override void _Process(float delta)
     {
-        Vector2 mousePos = GetViewport().GetMousePosition();
-        Vector3 mousePos3D = camera.ViewportPointToGround(mousePos).GetValueOrDefault();
-        float length = (mousePos3D - measureStart).Length();
+        
 
-        if (mousePos3D != default(Vector3))
+        base._Process(delta);
+    }
+
+    public override void _PhysicsProcess(float delta)
+    {
+        Vector2 mousePos = GetViewport().GetMousePosition();
+        Vector3? mousePos3D = toolCamera.ViewportPointToGround(mousePos);        
+
+        if (mousePos3D != null)
         {
+            Vector3 mousePos3DValue = mousePos3D.Value;
+
             if (Input.IsActionJustPressed("tools_measure"))
             {
-                measureStart = mousePos3D;
-                UpdateCursor(length);
+                Vector3 from = mainCamera.ProjectRayOrigin(mousePos);
+                Vector3 to = from + mainCamera.ProjectRayNormal(mousePos) * 1000f;              
+
+                PhysicsDirectSpaceState spaceState = mainCamera.GetWorld().DirectSpaceState;
+                Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
+
+                if (selection.Count > 0)
+                {
+                    Spatial collisionShape = (Spatial) selection["collider"];
+
+                    bool isCodeObject = collisionShape.GetType().GetInterfaces().Any(x => 
+                        x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICodeObject<>));
+
+                    if (isCodeObject)
+                    {
+                        measureStart = collisionShape.Transform.origin;
+                    }
+                    else
+                    {
+                        measureStart = mousePos3DValue;
+                    }
+                }
+                else
+                {
+                    measureStart = mousePos3DValue;
+                }
+
             }
             if (Input.IsActionPressed("tools_measure"))
             {
-                Clear();
-                DrawMeasureLine(measureStart, mousePos3D, Vector3.Up, 0.1f);   
-                UpdateCursor(length);             
+                if (measureStart != null)
+                {
+                    Vector3 measureStartValue = measureStart.Value;
+                    float length = (mousePos3DValue - measureStartValue).Length();
+                    Clear();
+                    DrawMeasureLine(measureStartValue, mousePos3DValue, Vector3.Up, Thickness);   
+                    UpdateCursor(length);
+                }
             }
             if (Input.IsActionJustReleased("tools_measure"))
             {
                 Clear();
+                measureStart = null;
                 cursor.SetDefault();
                 cursor.TooltipLower.Text = "";
             }
         }
 
-        base._Process(delta);
+        base._PhysicsProcess(delta);
     }
 
     private void UpdateCursor(float length)
@@ -73,8 +119,7 @@ public class MeasureLine : ImmediateGeometry
         AddVertex(end - perpendicular);
         AddVertex(start + perpendicular);
 
-        End();
-        
+        End();        
     }    
 
     private void DrawSector(Vector3 center, float radius, float angle, Vector3 direction, int segments, Vector3 normal)
