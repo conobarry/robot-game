@@ -6,14 +6,18 @@ public class CodeEditor : TextEdit
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        
+        Connect("mouse_entered", this, nameof(OnMouseEnter));
+        Connect("mouse_exited", this, nameof(OnMouseExit));
     }
 
-    public override void _Process(float delta)
+    private void OnMouseEnter()
     {
-        // GD.Print(GetTree().Root.FindNode("HUD").Name);
+        GetTree().GetCursor().SetCursor(CursorType.IBeam);
+    }
 
-        base._Process(delta);
+    private void OnMouseExit()
+    {
+        GetTree().GetCursor().SetCursor(CursorType.Default);
     }
 
 }
