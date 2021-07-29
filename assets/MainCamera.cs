@@ -1,19 +1,7 @@
 using Godot;
 
-public class MainCamera : Godot.Camera
+public class MainCamera : Camera
 {
-
-    private Vector2 prevMouseLoc = Vector2.Zero;
-
-    private Vector3 origin = Vector3.Zero;
-
-    private Vector3 measureStart = Vector3.Zero;
-
-    private ImmediateGeometry geo;
-
-    private Position3D position3D;
-
-    private Label tooltip;
 
     [Export]
     public float panMultiplier = 0.03f;
@@ -23,14 +11,23 @@ public class MainCamera : Godot.Camera
 
     [Export]
     public float zoomStepping = 1f;
+
+
+    private Cursor cursor;
+
+    private Vector2 prevMouseLoc = Vector2.Zero;
+
+    private Vector3 orbitOrigin = Vector3.Zero;
+
     
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+    }
 
-        tooltip = (Label)FindNode("Tooltip");
-        position3D = (Position3D)GetParent().FindNode("Position3D");
-        // GD.Print(linePlaneIntersection(Vector3.Zero, Vector3.Up, new Vector3(1, 1, 1), new Vector3(1, 1, 1)));
+    public void _Init(Cursor cursor)
+    {
+        this.cursor = cursor;
     }
 
     private void UpdateMousePosition()
@@ -45,14 +42,14 @@ public class MainCamera : Godot.Camera
             UpdateMousePosition();
         }
         if (Input.IsActionPressed("camera_pan"))
-        {Measure();
+        {
             Pan();
         }
 
         if (Input.IsActionJustPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
         {
             UpdateMousePosition();
-            origin = linePlaneIntersection(Vector3.Zero, Vector3.Up, GlobalTransform.origin, - Transform.basis.z);
+            orbitOrigin = linePlaneIntersection(Vector3.Zero, Vector3.Up, GlobalTransform.origin, - Transform.basis.z);
 
         }
         if (Input.IsActionPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
@@ -60,62 +57,24 @@ public class MainCamera : Godot.Camera
             Orbit();
         }        
 
-        Vector2 mousePos = GetViewport().GetMousePosition();
-        Vector3 pos3d = ProjectPosition(mousePos, 4.0f);
+        // Vector2 mousePos = GetViewport().GetMousePosition();
+        // Vector3 pos3d = ProjectPosition(mousePos, 4.0f);
         
-        pos3d = linePlaneIntersection(Vector3.Zero, Vector3.Up, Transform.origin, ProjectRayOrigin(mousePos));
+        // pos3d = linePlaneIntersection(Vector3.Zero, Vector3.Up, Transform.origin, ProjectRayOrigin(mousePos));
         // Plane dropPlane = new Plane(new Vector3(0, 1, 0), 0);
         // pos3d = dropPlane.IntersectRay(ProjectRayOrigin(mousePos), ProjectRayNormal(mousePos)) ?? new Vector3(0, 1, 0);
         
-        pos3d = ViewportPointToGround(mousePos) ?? new Vector3(0, 1, 0);
+        // pos3d = ViewportPointToGround(mousePos) ?? new Vector3(0, 1, 0);
 
-        position3D.Translation = pos3d;
+        // position3D.Translation = pos3d;
         // GD.Print(position3D.Transform.origin);
-
-
-    
 
         base._Process(delta);
     }
 
-    public Vector3? ViewportPointToGround(Vector2 viewportPoint)
-    {
-        Plane groundPlane = new Plane(0, 1, 0, 0);
-        Vector3 origin = ProjectRayOrigin(viewportPoint);
-        Vector3 normal = ProjectRayNormal(viewportPoint);
-        return groundPlane.IntersectRay(origin, normal);
-    }
-
-    public Vector2 GroundPointToViewport(Vector3 groundPoint)
-    {
-        return UnprojectPosition(groundPoint);
-    }
-
     public override void _PhysicsProcess(float delta)
-    {
-        Vector2 mousePos = GetViewport().GetMousePosition();
-
-        Vector3 from = ProjectRayOrigin(mousePos);
-        Vector3 to = from + ProjectRayNormal(mousePos) * 1000f;
-
-        PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
-        Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
-        if (selection.Count > 0)
-        {
-            Node collisionShape = (Node)selection["collider"];
-
-            if (collisionShape is IGameObject)
-            {
-                tooltip.Text = collisionShape.Name;                
-            }
-            else
-            {
-                tooltip.Text = "";
-            }
-
-            // GD.Print(collisionShape.Name);
-        }
-        
+    {        
+        Highlight();
 
         base._PhysicsProcess(delta);
     }
@@ -158,10 +117,39 @@ public class MainCamera : Godot.Camera
 
         // This works pretty well but makes the camera zoom out as it orbits.
         //  Could be due to the angle? I just chose 1 degree cause it seemed right.
-        Translate(new Vector3(orbitMultiplier * mouseDiff.x * (Mathf.Cos(angle) + origin.x), 0, orbitMultiplier * mouseDiff.x * (Mathf.Sin(angle) + origin.z)));
-        LookAt(origin, Vector3.Up);        
+        Translate(new Vector3(orbitMultiplier * mouseDiff.x * (Mathf.Cos(angle) + orbitOrigin.x), 0, orbitMultiplier * mouseDiff.x * (Mathf.Sin(angle) + orbitOrigin.z)));
+        LookAt(orbitOrigin, Vector3.Up);        
 
         prevMouseLoc = currMouseLoc;
+    }
+
+    private void Highlight()
+    {
+        Vector2 mousePos = GetViewport().GetMousePosition();
+
+        Vector3 from = ProjectRayOrigin(mousePos);
+        Vector3 to = from + ProjectRayNormal(mousePos) * 1000f;
+
+        PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
+        Godot.Collections.Dictionary selection = spaceState.IntersectRay(from, to);
+        
+        if (selection.Count > 0)
+        {
+            Node collisionShape = (Node)selection["collider"];
+
+            if (collisionShape is ICodeObject)
+            {                
+                cursor.TooltipUpper.Text = collisionShape.Name;
+                ICodeObject codeobject = (ICodeObject) collisionShape;
+                codeobject.Highlight();
+            }
+            else
+            {
+                cursor.TooltipUpper.Text = "";
+            }
+
+            // GD.Print(collisionShape.Name);
+        }
     }
 
     // Finds the intersection point between a line and a plane
@@ -174,13 +162,6 @@ public class MainCamera : Godot.Camera
 
         float t = (planeNormal.Dot(planePoint) - planeNormal.Dot(linePoint)) / planeNormal.Dot(lineDirection.Normalized());
         return linePoint + (lineDirection.Normalized() * t);
-    }
-
-    private void Measure()
-    {
-        
-
-
     }
 
     private void ZoomIn()
