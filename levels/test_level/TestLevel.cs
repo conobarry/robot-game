@@ -2,35 +2,23 @@ using Godot;
 
 public class TestLevel : Spatial
 {
-	
-	private Sprite cursor;
-
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public override void _Ready()	
 	{
-		ScriptEditor scriptEditor = (ScriptEditor)FindNode("ScriptEditor");				
-		Robot robot = (Robot)FindNode("Robot");
+		Robot robot = (Robot) FindNode("Robot");
 
+		ScriptEditor scriptEditor = (ScriptEditor) FindNode("ScriptEditor");
+		scriptEditor._Init(robot);		
+
+		// Set new cursor
+		Cursor cursor = (Cursor) FindNode("Cursor");
+		cursor.SetCursor(CursorType.Arrow);
 		
+		MainCamera camera = (MainCamera) FindNode("MainCamera");
+		camera._Init(cursor);
 
-		// Resource plus = ResourceLoader.Load("res://plus.png");
-		// Input.SetCustomMouseCursor(plus);
-
-		cursor = (Sprite)FindNode("Cursor");
-		HUD hud = (HUD)FindNode("HUD");
-
-		// Hide os cursor
-		Input.SetMouseMode(Input.MouseMode.Hidden);
-		hud.SetCursor(Cursor.Pointer);
-				
-		scriptEditor._Init(robot);
+		ToolView toolView = (ToolView) FindNode("ToolView");
+		toolView._Init(cursor);
 	}
-
-    public override void _Process(float delta)
-    {
-		cursor.Position = GetViewport().GetMousePosition();
-
-        base._Process(delta);
-    }
 
 }
