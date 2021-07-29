@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-public class Robot : KinematicBody, IGameObject
+public class Robot : KinematicBody, ICodeObject
 {
 
     private abstract class RobotCommand
@@ -65,6 +65,10 @@ public class Robot : KinematicBody, IGameObject
 
     private RobotCommand currentCommand;
 
+    private List<MeshInstance> highlightMeshes = new List<MeshInstance>();
+
+    private Material highlightMaterial;
+
     public bool isBusy = false;
 
     public Vector3 Forward { get { return Transform.basis.x; } }
@@ -85,8 +89,23 @@ public class Robot : KinematicBody, IGameObject
         return new Vector2(position.x, position.z);
     }
 
+    public string CodeName { get; set; }
 
-    public override void _Ready() {}
+
+    public override void _Ready()
+    {
+        highlightMaterial = GD.Load<Material>("res://outline_material.tres");
+
+        Spatial meshesNode = (Spatial) FindNode("Meshes");
+
+        foreach (Node child in meshesNode.GetChildren())
+        {
+            if (child is MeshInstance && child.IsInGroup("highlightable"))
+            {
+                highlightMeshes.Add((MeshInstance) child);
+            }
+        }
+    }
 
     public override void _PhysicsProcess(float delta)
     {
@@ -179,6 +198,22 @@ public class Robot : KinematicBody, IGameObject
                     break;
             }
         }        
+    }
+
+    public void Highlight()
+    {
+        foreach (MeshInstance mesh in highlightMeshes)
+        {
+            mesh.GetActiveMaterial(0).NextPass = highlightMaterial;
+        }
+    }
+
+    public void RemoveHighlight()
+    {
+        foreach (MeshInstance mesh in highlightMeshes)
+        {
+            mesh.MaterialOverride.NextPass = null;
+        }
     }
 
     private Vector3 ProcessMoveCommand(RobotMoveCommand moveCommand, float delta, Vector3 thisMovement)
