@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://assets/ui/RunButton.cs" type="Script" id=1]
 [ext_resource path="res://assets/ui/Window.cs" type="Script" id=2]
@@ -6,15 +6,18 @@
 [ext_resource path="res://assets/script_editor/Console.cs" type="Script" id=4]
 [ext_resource path="res://assets/script_editor/ScriptEditor.cs" type="Script" id=5]
 [ext_resource path="res://assets/fonts/roboto_mono_12.tres" type="DynamicFont" id=6]
-[ext_resource path="res://assets/ui/WindowResizeHandle.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/ui/ResizeContainer.cs" type="Script" id=7]
 [ext_resource path="res://assets/fonts/Montserrat.tres" type="DynamicFont" id=8]
 [ext_resource path="res://assets/script_editor/CodeEditor.cs" type="Script" id=9]
 [ext_resource path="res://assets/script_editor/EditorContainer.cs" type="Script" id=10]
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0.129412, 0.121569, 0.145098, 1 )
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.172549, 0.164706, 0.196078, 1 )
 
 [node name="ScriptEditor" type="CanvasLayer"]
@@ -25,8 +28,10 @@ anchor_left = 0.6
 anchor_top = 0.2
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_top = 1.0
 margin_right = -15.0
-margin_bottom = -15.0
+margin_bottom = -14.0
+rect_min_size = Vector2( 200, 200 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource( 2 )
@@ -39,20 +44,87 @@ margin_right = 394.0
 margin_bottom = 445.0
 mouse_filter = 1
 
-[node name="WindowContainer" type="VBoxContainer" parent="Window/WindowBackground"]
+[node name="ResizeContainer" type="GridContainer" parent="Window/WindowBackground"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 3
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TitlebarBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
+[node name="NorthWest" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_right = 5.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+
+[node name="North" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 5.0
+margin_right = 389.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+
+[node name="NorthEast" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 389.0
 margin_right = 394.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+
+[node name="West" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_top = 5.0
+margin_right = 5.0
+margin_bottom = 440.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 4 )
+
+[node name="Center" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 389.0
+margin_bottom = 440.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 4 )
+
+[node name="WindowContainer" type="VBoxContainer" parent="Window/WindowBackground/ResizeContainer/Center"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TitlebarBackground" type="Panel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer"]
+margin_right = 384.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 0, 20 )
 mouse_filter = 1
 
-[node name="TitlebarContainer" type="HBoxContainer" parent="Window/WindowBackground/WindowContainer/TitlebarBackground"]
+[node name="TitlebarContainer" type="HBoxContainer" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/TitlebarBackground"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -62,8 +134,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="DragArea" type="Panel" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer"]
-margin_right = 394.0
+[node name="DragArea" type="Panel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/TitlebarBackground/TitlebarContainer"]
+margin_right = 384.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 0, 15 )
 size_flags_horizontal = 3
@@ -74,7 +146,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Window/WindowBackground/WindowContainer/TitlebarBackground/TitlebarContainer/DragArea"]
+[node name="Label" type="Label" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/TitlebarBackground/TitlebarContainer/DragArea"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 5.0
@@ -87,39 +159,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ContentBackground" type="Panel" parent="Window/WindowBackground/WindowContainer"]
-margin_top = 24.0
-margin_right = 394.0
-margin_bottom = 445.0
-mouse_filter = 1
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="ContentContainer" type="VBoxContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 5.0
-margin_top = 5.0
-margin_right = -5.0
-margin_bottom = -5.0
+[node name="ContentContainer" type="VBoxContainer" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer"]
+margin_top = 28.0
+margin_right = 384.0
+margin_bottom = 435.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InputContainer" type="VBoxContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer"]
+[node name="InputContainer" type="VBoxContainer" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer"]
 margin_right = 384.0
-margin_bottom = 411.0
+margin_bottom = 407.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EditorContainer" type="VSplitContainer" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
+[node name="EditorContainer" type="VSplitContainer" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer"]
 margin_right = 384.0
-margin_bottom = 387.0
+margin_bottom = 383.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -128,17 +189,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CodeEditor" type="TextEdit" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
+[node name="CodeEditor" type="TextEdit" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/EditorContainer"]
 margin_right = 384.0
-margin_bottom = 252.0
+margin_bottom = 249.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 custom_fonts/font = ExtResource( 6 )
-text = "robot.move_forward(3)
-robot.turn_right(90)
-print(\"Hello there\")
-robot.move_backward(2)"
+text = "robot.move_forward(6.5)"
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
@@ -146,16 +204,16 @@ breakpoint_gutter = true
 highlight_all_occurrences = true
 script = ExtResource( 9 )
 
-[node name="ConsoleBorder" type="Panel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer"]
-margin_top = 264.0
+[node name="ConsoleBorder" type="Panel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/EditorContainer"]
+margin_top = 261.0
 margin_right = 384.0
-margin_bottom = 387.0
+margin_bottom = 383.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 5 )
 
-[node name="ConsoleBackground" type="Panel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer/ConsoleBorder"]
+[node name="ConsoleBackground" type="Panel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/EditorContainer/ConsoleBorder"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 1.0
@@ -165,12 +223,12 @@ margin_bottom = -1.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Console" type="RichTextLabel" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/EditorContainer/ConsoleBorder/ConsoleBackground"]
+[node name="Console" type="RichTextLabel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/EditorContainer/ConsoleBorder/ConsoleBackground"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 focus_mode = 2
@@ -185,19 +243,58 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RunButton" type="Button" parent="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer"]
-margin_top = 391.0
+[node name="RunButton" type="Button" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer"]
+margin_top = 387.0
 margin_right = 384.0
-margin_bottom = 411.0
+margin_bottom = 407.0
 size_flags_horizontal = 3
 text = "Run"
 script = ExtResource( 1 )
 
-[node name="WindowResizeHandle" parent="Window" instance=ExtResource( 7 )]
-visible = false
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="East" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 389.0
+margin_top = 5.0
+margin_right = 394.0
+margin_bottom = 440.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 4 )
+
+[node name="SouthWest" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_top = 440.0
+margin_right = 5.0
+margin_bottom = 445.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+
+[node name="South" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 5.0
+margin_top = 440.0
+margin_right = 389.0
+margin_bottom = 445.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+
+[node name="SouthEast" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
+margin_left = 389.0
+margin_top = 440.0
 margin_right = 394.0
 margin_bottom = 445.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 1
+size_flags_horizontal = 9
+size_flags_vertical = 9
+custom_styles/panel = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[connection signal="pressed" from="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/RunButton" to="Window/WindowBackground/WindowContainer/ContentBackground/ContentContainer/InputContainer/RunButton" method="OnButtonPressed"]
+[connection signal="pressed" from="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/RunButton" to="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/RunButton" method="OnButtonPressed"]
