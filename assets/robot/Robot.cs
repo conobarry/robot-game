@@ -82,6 +82,8 @@ public class Robot : KinematicBody, ICodeObject<Robot>
         get { return new Vector2(Transform.origin.x, Transform.origin.z); }
     }
 
+    public Position3D CameraPosition { get; private set; }
+
     public static Vector2 GetGroundPosition(Vector3 position)
     {
         return new Vector2(position.x, position.z);
@@ -95,6 +97,8 @@ public class Robot : KinematicBody, ICodeObject<Robot>
 
     public override void _Ready()
     {
+        CameraPosition = (Position3D) FindNode(nameof(CameraPosition));
+
         HighlightMaterial = GD.Load<Material>("res://assets/outline_material.tres");
         HighlightMeshes = new List<MeshInstance>();
 
