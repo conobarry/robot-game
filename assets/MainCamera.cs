@@ -12,8 +12,35 @@ public class MainCamera : Camera
     [Export]
     public float zoomStepping = 1f;
 
+    public bool FollowRobot
+    {
+        get
+        {
+            return isFollowingRobot;
+        }
+        set
+        {
+            if (value)
+            {
+                oldTransform = Transform;
+                Projection = ProjectionEnum.Perspective;
+            }
+            else
+            {
+                Transform = oldTransform;
+            }
+            
+            isFollowingRobot = value;
+        }
+    }
+
+    private bool isFollowingRobot = false;
 
     private Cursor cursor;
+
+    private Robot robot;
+
+    private Transform oldTransform;
 
     private Spatial level;
 
@@ -21,16 +48,19 @@ public class MainCamera : Camera
 
     private Vector3 orbitOrigin = Vector3.Zero;
 
+    private Position3D topDownPosition;
+
     
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        
+        topDownPosition = (Position3D) GetParent().FindNode("TopDownPosition");
     }
 
-    public void _Init(Cursor cursor)
+    public void _Init(Cursor cursor, Robot robot)
     {
         this.cursor = cursor;
+        this.robot = robot;
     }
 
     private void UpdateMousePosition()
@@ -40,44 +70,38 @@ public class MainCamera : Camera
 
     public override void _Process(float delta)
     {
-        if (Input.IsActionJustPressed("camera_pan"))
+        if (! FollowRobot)
         {
-            UpdateMousePosition();
+            if (Input.IsActionJustPressed("camera_pan"))
+            {
+                UpdateMousePosition();
+            }
+            if (Input.IsActionPressed("camera_pan"))
+            {
+                Pan();
+            }
+
+            if (Input.IsActionJustPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
+            {
+                UpdateMousePosition();
+                orbitOrigin = linePlaneIntersection(Vector3.Zero, Vector3.Up, GlobalTransform.origin, - Transform.basis.z);
+
+            }
+            if (Input.IsActionPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
+            {
+                Orbit();
+            } 
         }
-        if (Input.IsActionPressed("camera_pan"))
-        {
-            Pan();
-        }
-
-        if (Input.IsActionJustPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
-        {
-            UpdateMousePosition();
-            orbitOrigin = linePlaneIntersection(Vector3.Zero, Vector3.Up, GlobalTransform.origin, - Transform.basis.z);
-
-        }
-        if (Input.IsActionPressed("camera_orbit") && Input.IsActionPressed("camera_orbit_modifier"))
-        {
-            Orbit();
-        }        
-
-        // Vector2 mousePos = GetViewport().GetMousePosition();
-        // Vector3 pos3d = ProjectPosition(mousePos, 4.0f);
-        
-        // pos3d = linePlaneIntersection(Vector3.Zero, Vector3.Up, Transform.origin, ProjectRayOrigin(mousePos));
-        // Plane dropPlane = new Plane(new Vector3(0, 1, 0), 0);
-        // pos3d = dropPlane.IntersectRay(ProjectRayOrigin(mousePos), ProjectRayNormal(mousePos)) ?? new Vector3(0, 1, 0);
-        
-        // pos3d = ViewportPointToGround(mousePos) ?? new Vector3(0, 1, 0);
-
-        // position3D.Translation = pos3d;
-        // GD.Print(position3D.Transform.origin);
 
         base._Process(delta);
     }
 
     public override void _PhysicsProcess(float delta)
     {        
-        // Highlight();
+        if (FollowRobot)
+        {
+            Transform = robot.CameraPosition.GlobalTransform;
+        }
 
         base._PhysicsProcess(delta);
     }
@@ -86,16 +110,17 @@ public class MainCamera : Camera
     //  so I've put those here. This is called whenever an input happens
     public override void _Input(InputEvent @event)
     {
-        if (@event.IsActionPressed("camera_zoom_in"))
+        if (! FollowRobot)
         {
-            ZoomIn();
-        } 
-        else if (@event.IsActionPressed("camera_zoom_out"))
-        {
-            ZoomOut();
+            if (@event.IsActionPressed("camera_zoom_in"))
+            {
+                ZoomIn();
+            } 
+            else if (@event.IsActionPressed("camera_zoom_out"))
+            {
+                ZoomOut();
+            }
         }
-
-        // tooltip.SetPosition(GetViewport().GetMousePosition());
 
         base._Input(@event);
     }
@@ -136,6 +161,12 @@ public class MainCamera : Camera
         prevMouseLoc = currMouseLoc;
         
     }
+
+    public void MoveToTopDown()
+    {
+        Transform = topDownPosition.Transform;
+    }
+
 
     // private void Highlight()
     // {
