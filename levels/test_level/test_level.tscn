@@ -1,8 +1,8 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/ui/DebugUI.cs" type="Script" id=1]
 [ext_resource path="res://assets/MainCamera.cs" type="Script" id=2]
-[ext_resource path="res://assets/wall/wall.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/walls/brick_wall/brick_wall.tscn" type="PackedScene" id=3]
 [ext_resource path="res://levels/test_level/TestLevel.cs" type="Script" id=4]
 [ext_resource path="res://assets/cube/cube.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/floor/floor.tscn" type="PackedScene" id=6]
@@ -11,34 +11,49 @@
 [ext_resource path="res://assets/ui/HUD.cs" type="Script" id=9]
 [ext_resource path="res://assets/ui/cursors/cursor.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/ui/menus/pause_menu.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/ui/control_buttons.tscn" type="PackedScene" id=12]
 [ext_resource path="res://assets/ui/tools/tool_view.tscn" type="PackedScene" id=13]
+[ext_resource path="res://assets/walls/wood_wall/wood_wall.tscn" type="PackedScene" id=14]
+[ext_resource path="res://assets/pad.tscn" type="PackedScene" id=15]
+[ext_resource path="res://assets/ui/ProgressMeter.tscn" type="PackedScene" id=16]
 
 [sub_resource type="Environment" id=1]
 ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="TestLevel" type="Spatial"]
 script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
 
-[node name="MainCamera" type="Camera" parent="."]
-transform = Transform( 0.707107, -0.454519, 0.541675, 0, 0.766044, 0.642788, -0.707107, -0.454519, 0.541675, 15.7595, 23.543, 15.7595 )
+[node name="Camera" type="Spatial" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MainCamera" type="Camera" parent="Camera"]
+transform = Transform( -0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, 0.5, -0.5, -15.759, 23.543, -15.759 )
 projection = 1
 current = true
 size = 30.0
 script = ExtResource( 2 )
 
+[node name="TopDownPosition" type="Position3D" parent="Camera"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 25, 0 )
+
 [node name="Level" type="Spatial" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Floor" parent="Level" instance=ExtResource( 6 )]
 transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, -0.0772341, 0 )
 
 [node name="Robot" parent="Level" instance=ExtResource( 8 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 9.17401, -0.0287505, 0 )
+transform = Transform( -0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, -2.55981, -0.0287505, -6.50846 )
 input_capture_on_drag = false
 speed = 2.0
 rotationalSpeed = 1.5
-
-[node name="Cube" parent="Level" instance=ExtResource( 5 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16148, 0 )
 
 [node name="CeilingLights" type="Spatial" parent="Level"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.46151, 0 )
@@ -75,19 +90,103 @@ light_indirect_energy = 4.75
 light_specular = 0.63
 omni_range = 9.32518
 
-[node name="Walls" type="Spatial" parent="Level"]
+[node name="ExteriorWalls" type="Spatial" parent="Level"]
 
-[node name="Wall" parent="Level/Walls" instance=ExtResource( 3 )]
+[node name="BrickWall1" parent="Level/ExteriorWalls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.8441 )
 
-[node name="Wall2" parent="Level/Walls" instance=ExtResource( 3 )]
+[node name="BrickWall2" parent="Level/ExteriorWalls" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.8716 )
 
-[node name="Wall3" parent="Level/Walls" instance=ExtResource( 3 )]
+[node name="BrickWall3" parent="Level/ExteriorWalls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.9362, 0, 5.21746e-07 )
 
-[node name="Wall4" parent="Level/Walls" instance=ExtResource( 3 )]
+[node name="BrickWall4" parent="Level/ExteriorWalls" instance=ExtResource( 3 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9213, 0, -5.21097e-07 )
+
+[node name="InteriorWalls" type="Spatial" parent="Level"]
+
+[node name="WoodWall" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8.101, 0, -5.1838 )
+
+[node name="WoodWall2" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8.13552, 0, -7.98195 )
+
+[node name="WoodWall3" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.91009, 0, -8.13552 )
+
+[node name="WoodWall4" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.900765, 0, -0.790048 )
+
+[node name="WoodWall5" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6593, 0, -1.62593 )
+
+[node name="WoodWall6" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8.44018, 0, 1.91023 )
+
+[node name="WoodWall7" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.52498, 0, 8.08346 )
+
+[node name="WoodWall8" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72506, 0, 2.91928 )
+
+[node name="WoodWall13" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.97588, 0, 2.91928 )
+
+[node name="WoodWall9" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.81292, 0, 7.48819 )
+
+[node name="WoodWall14" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.18476, 0, 7.48819 )
+
+[node name="WoodWall10" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.18339, 0, 3.88316 )
+
+[node name="WoodWall11" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 7.53434, 0, -0.727063 )
+
+[node name="WoodWall12" parent="Level/InteriorWalls" instance=ExtResource( 14 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.17732, 0, -8.15155 )
+
+[node name="Pads" type="Spatial" parent="Level"]
+
+[node name="Pad" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.853, 0.037833, -6.60635 )
+
+[node name="Pad2" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.16745, 0.037833, -0.216458 )
+
+[node name="Pad3" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.02901, 0.037833, 5.27479 )
+
+[node name="Pad4" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.83586, 0.037833, 5.11902 )
+
+[node name="Pad5" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3334, 0.037833, 1.19272 )
+
+[node name="Pad6" parent="Level/Pads" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2533, 0.037833, -9.94958 )
+
+[node name="Cubes" type="Spatial" parent="Level"]
+
+[node name="Cube" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.58977, 1.16148, 5.14003 )
+
+[node name="Cube2" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.88264, 1.16148, -6.48018 )
+
+[node name="Cube3" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.599449, 1.16148, 5.14003 )
+
+[node name="Cube4" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.30844, 1.16148, 5.08869 )
+
+[node name="Cube5" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.25483, 1.16148, -2.31867 )
+
+[node name="Cube6" parent="Level/Cubes" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21957, 1.16148, -2.31867 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
@@ -103,6 +202,7 @@ script = ExtResource( 9 )
 script = ExtResource( 1 )
 
 [node name="DebugLabel" type="Label" parent="HUD/DebugUI"]
+visible = false
 margin_left = -0.0371618
 margin_right = 39.9628
 margin_bottom = 14.0
@@ -112,11 +212,15 @@ __meta__ = {
 
 [node name="ScriptEditor" parent="HUD" instance=ExtResource( 7 )]
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="HUD"]
+[node name="ControlButtons" parent="HUD" instance=ExtResource( 12 )]
 
-[node name="PauseMenu" parent="HUD/CanvasLayer2" instance=ExtResource( 11 )]
+[node name="ProgressMeter" parent="HUD" instance=ExtResource( 16 )]
+
+[node name="PauseCanvas" type="CanvasLayer" parent="HUD"]
+
+[node name="PauseMenu" parent="HUD/PauseCanvas" instance=ExtResource( 11 )]
 visible = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="HUD"]
+[node name="CursorCanvas" type="CanvasLayer" parent="HUD"]
 
-[node name="Cursor" parent="HUD/CanvasLayer" instance=ExtResource( 10 )]
+[node name="Cursor" parent="HUD/CursorCanvas" instance=ExtResource( 10 )]
