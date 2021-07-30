@@ -59,6 +59,14 @@ public class Cursor : Control
 
     private CursorData ruler;
 
+    private CursorData resizeEW;
+    
+    private CursorData resizeNS;
+
+    private CursorData resizeNESW;
+
+    private CursorData resizeNWSE;
+
 
     public override void _Ready()
     {
@@ -93,6 +101,18 @@ public class Cursor : Control
         Texture handTexture = GD.Load<Texture>("res://assets/ui/cursors/hand.png");
         hand = new CursorData(handTexture, new Vector2(6, 0)); 
 
+        Texture resizeNSTexture = GD.Load<Texture>("res://assets/ui/cursors/resize_ns.png");
+        resizeNS = new CursorData(resizeNSTexture, new Vector2(12, 11)); 
+
+        Texture resizeEWTexture = GD.Load<Texture>("res://assets/ui/cursors/resize_ew.png");
+        resizeEW = new CursorData(resizeEWTexture, new Vector2(12, 11)); 
+
+        Texture resizeNESWTexture = GD.Load<Texture>("res://assets/ui/cursors/resize_nesw.png");
+        resizeNESW = new CursorData(resizeNESWTexture, new Vector2(12, 12)); 
+
+        Texture resizeNWSETexture = GD.Load<Texture>("res://assets/ui/cursors/resize_nwse.png");
+        resizeNWSE = new CursorData(resizeNWSETexture, new Vector2(12, 12)); 
+
         defaultCursor = arrow;
     }
 
@@ -108,8 +128,7 @@ public class Cursor : Control
         CursorData newCursor;
         
         switch (cursorType)
-        {
-            
+        {            
             case CursorType.Arrow:
                 newCursor = arrow;
                 break;
@@ -131,6 +150,18 @@ public class Cursor : Control
             case CursorType.Ruler:
                 newCursor = ruler;
                 break;
+            case CursorType.ResizeNS:
+                newCursor = resizeNS;
+                break;
+            case CursorType.ResizeEW:
+                newCursor = resizeEW;
+                break;
+            case CursorType.ResizeNESW:
+                newCursor = resizeNESW;
+                break;
+            case CursorType.ResizeNWSE:
+                newCursor = resizeNWSE;
+                break;
             case CursorType.Default:
             default:
                 newCursor = defaultCursor;
@@ -149,12 +180,17 @@ public class Cursor : Control
 
 public enum CursorType
 {
-    Default,
+    Default = 0,
     Arrow,
     Pointer,
     Grab,
     Hand,
     IBeam,
     Cross,
-    Ruler
+    Ruler,
+    ResizeNS,
+    ResizeEW,
+    ResizeNESW,
+    ResizeNWSE
+    
 }
