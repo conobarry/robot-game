@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/fonts/Comfortaa_24_outline.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/ui/ProgressMeter.cs" type="Script" id=2]
+
+[node name="ProgressMeter" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="Container" type="CenterContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.5
+anchor_bottom = 0.2
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+use_top_left = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Container"]
+margin_left = -121.0
+margin_top = -23.0
+margin_right = 120.0
+margin_bottom = 23.0
+mouse_filter = 2
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Container/VBoxContainer"]
+margin_right = 241.0
+margin_bottom = 28.0
+custom_fonts/font = ExtResource( 1 )
+text = "Push the boxes! 0/6"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ProgressBar" type="ProgressBar" parent="Container/VBoxContainer"]
+margin_top = 32.0
+margin_right = 241.0
+margin_bottom = 46.0
+mouse_filter = 2
