@@ -14,9 +14,9 @@ using System.Diagnostics;
 public class PythonScriptManager : Node
 {   
 
-    public event EventHandler<DataReceivedEventArgs> SysOutReceived;
+    public event EventHandler<DataReceivedEventArgs> StdOutReceived;
 
-    public event EventHandler<DataReceivedEventArgs> SysErrReceived;
+    public event EventHandler<DataReceivedEventArgs> StdErrReceived;
 
     public Process process;
     public StreamWriter streamWriter;
@@ -81,11 +81,11 @@ public class PythonScriptManager : Node
         // this.process.OutputDataReceived += (sender, args) => EmitSignal(nameof(OnSysOut));
 
         process.OutputDataReceived += (sender, args) => {
-            OnSysOut(args);
+            OnStdOut(args);
         };
 
         process.ErrorDataReceived += (sender, args) => {
-            OnSysErr(args);
+            OnStdErr(args);
         };
                 
         process.Start();
@@ -158,9 +158,9 @@ public class PythonScriptManager : Node
         
     }
 
-    protected virtual void OnSysOut(DataReceivedEventArgs args)
+    protected virtual void OnStdOut(DataReceivedEventArgs args)
     {
-        EventHandler<DataReceivedEventArgs> handler = SysOutReceived;
+        EventHandler<DataReceivedEventArgs> handler = StdOutReceived;
         // handler?.Invoke(this, e);
         if (handler != null)
         {
@@ -168,9 +168,9 @@ public class PythonScriptManager : Node
         }
     }
 
-    protected virtual void OnSysErr(DataReceivedEventArgs args)
+    protected virtual void OnStdErr(DataReceivedEventArgs args)
     {
-        EventHandler<DataReceivedEventArgs> handler = SysErrReceived;
+        EventHandler<DataReceivedEventArgs> handler = StdErrReceived;
         if (handler != null)
         {
             handler(this, args);

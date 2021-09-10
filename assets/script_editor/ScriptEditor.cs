@@ -35,8 +35,8 @@ public class ScriptEditor : DebugUI
         // this.runButton.Connect(nameof(RunButton.OnRunScript), this, nameof(ScriptEditor.RunScriptAsync), new Godot.Collections.Array { robot });
 
         runButton.ButtonPressed += async (sender, e) => await Task.Run(() => RunScriptAsync(robot));
-        scriptManager.SysOutReceived += ProcessSysOut;
-        scriptManager.SysErrReceived += ProcessSysErr;
+        scriptManager.StdOutReceived += ProcessStdOut;
+        scriptManager.StdErrReceived += ProcessStdErr;
 
         return this;
     }
@@ -74,7 +74,7 @@ public class ScriptEditor : DebugUI
     }
 
     // Processes sysout from python and sends anything useful as an event
-    public void ProcessSysOut(object sender, DataReceivedEventArgs args)
+    public void ProcessStdOut(object sender, DataReceivedEventArgs args)
     {
         string text = args.Data;
 
@@ -106,7 +106,7 @@ public class ScriptEditor : DebugUI
         }
     }
 
-    public void ProcessSysErr(object sender, DataReceivedEventArgs args)
+    public void ProcessStdErr(object sender, DataReceivedEventArgs args)
     {
 
         if (args.Data != null)
