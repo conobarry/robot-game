@@ -11,10 +11,10 @@
 [ext_resource path="res://assets/script_editor/CodeEditor.cs" type="Script" id=9]
 [ext_resource path="res://assets/script_editor/EditorContainer.cs" type="Script" id=10]
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
 
-[sub_resource type="StyleBoxFlat" id=5]
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.129412, 0.121569, 0.145098, 1 )
 
 [sub_resource type="StyleBoxFlat" id=3]
@@ -65,7 +65,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="North" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_left = 5.0
@@ -75,7 +75,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="NorthEast" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_left = 389.0
@@ -85,7 +85,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="West" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_top = 5.0
@@ -95,7 +95,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="Center" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_left = 5.0
@@ -106,7 +106,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="WindowContainer" type="VBoxContainer" parent="Window/WindowBackground/ResizeContainer/Center"]
 anchor_right = 1.0
@@ -211,7 +211,7 @@ margin_bottom = 383.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 2 )
 
 [node name="ConsoleBackground" type="Panel" parent="Window/WindowBackground/ResizeContainer/Center/WindowContainer/ContentContainer/InputContainer/EditorContainer/ConsoleBorder"]
 anchor_right = 1.0
@@ -260,7 +260,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="SouthWest" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_top = 440.0
@@ -270,7 +270,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="South" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_left = 5.0
@@ -281,7 +281,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 
 [node name="SouthEast" type="Panel" parent="Window/WindowBackground/ResizeContainer"]
 margin_left = 389.0
@@ -292,7 +292,7 @@ rect_min_size = Vector2( 5, 5 )
 mouse_filter = 1
 size_flags_horizontal = 9
 size_flags_vertical = 9
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
