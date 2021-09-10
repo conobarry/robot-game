@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="RobotGame"
-run/main_scene="res://levels/test_level/test_level.tscn"
+run/main_scene="res://assets/ui/menus/main_menu.tscn"
 config/icon="res://assets/godot.png"
 
 [display]
