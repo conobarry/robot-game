@@ -3,7 +3,7 @@ using Godot;
 public class ProgressMeter : CanvasLayer
 {
 
-    public int MaxValue
+    public double MaxValue
     {
         get { return _maxValue; }
         set
@@ -13,7 +13,7 @@ public class ProgressMeter : CanvasLayer
         }
     }
 
-    public int CurrentValue
+    public double CurrentValue
     {
         get { return _currentValue; }
         set
@@ -33,9 +33,9 @@ public class ProgressMeter : CanvasLayer
         }
     }
 
-    private int _maxValue = 0;
+    private double _maxValue = 0;
 
-    private int _currentValue = 0;
+    private double _currentValue = 0;
 
     private string _title = "";
 
@@ -61,9 +61,16 @@ public class ProgressMeter : CanvasLayer
 
     public void Update()
     {
-        label.Text = $"{_title} {_currentValue}/{_maxValue}";
-        progressBar.Value = _currentValue / _maxValue * 100;
-        GD.Print((_currentValue / _maxValue) * 100);
+        if (_currentValue < _maxValue)
+        {
+            label.Text = $"{_title} {_currentValue}/{_maxValue}";
+            progressBar.Value = _currentValue / _maxValue * 100;
+        }
+        else
+        {
+            label.Text = $"Level Complete! {_currentValue}/{_maxValue}";
+            progressBar.Value = 100;
+        }
     }
 
 }
